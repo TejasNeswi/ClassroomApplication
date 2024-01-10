@@ -41,16 +41,11 @@ app.get("/login",(req,res)=>{
   res.render("login.ejs")
 })
 
-app.get("/views/classb.ejs",(req,res)=>{
-  if(req.session.authenticated||sec=='B'){
-    res.render("classb.ejs");
-  }else{
-    res.send("Not authenticated");
-  }
-})
+
 
 app.get("/views/userreg.ejs",(req,res)=>{
-  if(req.session.authenticated){
+  const usermode =req.session.mode;
+  if(usermode=="admin"){
     res.render("userreg.ejs")
   }else{
     res.send("Not authenticated")
@@ -81,11 +76,11 @@ app.post("/login", async (req, res) => {
       const storedHash = result.rows[0].upassword;
       const mode = result.rows[0].umode;
       const sec = result.rows[0].div;
+      req.session.sec=sec
+      req.session.mode=mode
 
       if (await bcrypt.compare(password, storedHash)) {
-        if(mode=='admin'){
-          req.session.authenticated=true;
-        }  
+        
         res.render("homepg.ejs")
           
       } else {
@@ -109,6 +104,61 @@ app.post("/login", async (req, res) => {
       });
   }
 });
+
+
+// Handles get requests to cy
+app.get("/views/cy.ejs", (req, res) => {
+  const userSec = req.session.sec;
+  const userMode = req.session.mode;
+
+      if (userMode == 'admin' || (userMode !== 'admin' && userSec == "CY")) {
+          res.render("cy.ejs");
+      } else {
+          res.send("Unauthorized access");
+      }
+  
+});
+
+// Handles get requests to cse
+app.get("/views/cse.ejs", (req, res) => {
+  const userSec = req.session.sec;
+  const userMode = req.session.mode;
+
+      if (userMode === 'admin' || (userMode !== 'admin' && userSec === "CSE")) {
+          res.render("cy.ejs");
+      } else {
+          res.send("Unauthorized access");
+      }
+  
+});
+
+//handles get requests to cd
+app.get("/views/cd.ejs",(req,res)=>{ 
+  const userSec = req.session.sec;
+  const userMode = req.session.mode;
+
+      if (userMode === 'admin' || (userMode !== 'admin' && userSec == "CD")) {
+          res.render("cd.ejs");
+      } else {
+          res.send("Unauthorized access");
+      }
+  
+})
+
+
+app.get("/views/cym.ejs",(req,res)=>{
+ res.render("cym.ejs")
+})
+
+app.get("/views/cya.ejs",(req,res)=>{
+  const usermode=req.session.mode;
+  if(usermode==='admin'||usermode==='teacher'){
+    res.render("cya.ejs")
+  }else{
+    res.send("Unauthorized access")
+  }
+})
+
 
 app.post("/register",async (req,res)=>{
     const username=req.body["username"];

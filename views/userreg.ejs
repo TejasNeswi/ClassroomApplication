@@ -68,15 +68,20 @@
 
         <label for="usertype">User Type:</label>
         <select id="usertype" name="usertype" required>
-            <option value="user">User</option>
             <option value="admin">Admin</option>
             <option value="teacher">Teacher</option>
-            <!-- Add more user types as needed -->
+            <option value="user">Student</option>
+            
         </select>
 
-        <!-- Add Section field -->
+        
         <label for="section">Section:</label>
-        <input type="text" id="section" name="section" required>
+        <select id="section" name="section" required>
+            <option value="CY">CY</option>
+            <option value="CD">CD</option>
+            <option value="CSE">CSE</option>
+            
+        </select>
 
         <button type="submit">Sign Up</button>
     </form>
