@@ -14,6 +14,8 @@ const dbConfig = {
   password: "[{(4better)}]",
   port: 5432,
 };
+
+app.set('view engine','ejs')
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
 app.use(cookieParser());
@@ -47,11 +49,11 @@ app.get("/views/classb.ejs",(req,res)=>{
   }
 })
 
-app.get("/views/register/user",(req,res)=>{
+app.get("/views/userreg.ejs",(req,res)=>{
   if(req.session.authenticated){
     res.render("userreg.ejs")
   }else{
-    res.render("Not authenticated")
+    res.send("Not authenticated")
   }
 })
 
@@ -66,49 +68,60 @@ app.get("views\\class2.ejs",(req,res)=>{
 
 
 
-app.post("/login",async(req,res)=>{
-  const username=req.body["username"];
-    const password=req.body["password"];
-    const salt=await bcrypt.genSalt(15);
-    const hash=await bcrypt.hash(password,salt);
-    const db=new pg.Client(dbConfig);
-    try{
+app.post("/login", async (req, res) => {
+  const username = req.body["username"];
+  const password = req.body["password"];
+  const salt = await bcrypt.genSalt(5);
+  const hash = await bcrypt.hash(password, salt);
+  const db = new pg.Client(dbConfig);
+
+  try {
       await db.connect();
-      const resu = await db.query("SELECT * FROM userlogin WHERE uname =$1",[username]);
-      const storedhash=resu.rows[0].upassword;
-      const mode=resu.rows[0].umode;
-      const sec=resu.rows[0].div;
-      if(await bcrypt.compare(password,storedhash)){
-        if(mode=="admin"||mode=="teacher")
-        {req.session.authenticated=true;
-        res.render("homepg.ejs");
+      const result = await db.query("SELECT * FROM userlogin WHERE uname =$1", [username]);
+      const storedHash = result.rows[0].upassword;
+      const mode = result.rows[0].umode;
+      const sec = result.rows[0].div;
+
+      if (await bcrypt.compare(password, storedHash)) {
+        if(mode=='admin'){
+          req.session.authenticated=true;
+        }  
+        res.render("homepg.ejs")
+          
+      } else {
+          res.send("Username or password doesn't match");
+          return; // Exit the function early if password doesn't match
       }
-    }else{
-        res.send("Username or password does'nt match");
-      }
-    }catch(err){
-      console.error("Error carrying out the query",err);
-    }finally{
-      db.end((endErr)=>{
-        if(endErr){
-          console.error("Connection couldn't be terminated");
-        }else{
-          console.log("Connection closed successfully");
-        }
-      })
-    }
-});;
+  } catch (err) {
+      console.error("Error carrying out the query", err);
+      res.status(500).send("Internal Server Error");
+      return; // Exit the function early in case of an error
+  } finally {
+      db.end((endErr) => {
+          if (endErr) {
+              console.error("Connection couldn't be terminated");
+          } else {
+              console.log("Connection closed successfully");
+          }
+          // No need to check req.session.authenticated here
+          // Render the home page here after ensuring the database connection is closed
+          
+      });
+  }
+});
+
 app.post("/register",async (req,res)=>{
     const username=req.body["username"];
     const password=req.body["password"];
     const type=req.body["usertype"]
-    const salt= await bcrypt.genSalt(15);
+    const sec=req.body["section"]
+    const salt= await bcrypt.genSalt(5);
     const hash=await bcrypt.hash(password,salt);
     const db=new pg.Client(dbConfig);
     try {
         await db.connect();
     
-        const result = await db.query("INSERT INTO userlogin VALUES ($1, $2,$3)", [username, hash,type]);
+        const result = await db.query("INSERT INTO userlogin VALUES ($1, $2,$3,$4)", [username, hash,type,sec]);
         
         console.log("Query successful");
         
