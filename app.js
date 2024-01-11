@@ -5,6 +5,13 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import multer from "multer";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 const app = express();
 const dbConfig = {
@@ -24,11 +31,8 @@ const upload =multer({storage});
 
 
 app.set('view engine','ejs')
-
-
-
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname,'public')));
 app.use(cookieParser());
 app.use(
   session({
