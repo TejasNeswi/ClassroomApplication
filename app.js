@@ -121,11 +121,15 @@ app.post("/login", async (req, res) => {
   }
 });
 
-
+app.get("/logout.ejs",(req,res)=>{
+  req.session.destroy();
+  res.redirect("/login.ejs")
+})
 // Handles get requests to cy
 app.get("/views/cy.ejs", (req, res) => {
   const userSec = req.session.sec;
   const userMode = req.session.mode;
+  console.log(userMode);
 
       if (userMode == 'admin' || (userMode !== 'admin' && userSec == "CY")) {
           res.render("cy.ejs");
@@ -162,9 +166,7 @@ app.get("/views/cd.ejs",(req,res)=>{
 })
 
 
-app.get("/views/cym.ejs",(req,res)=>{
- res.render("cym.ejs")
-})
+
 
 app.get("/views/cya.ejs",(req,res)=>{
   const usermode=req.session.mode;
@@ -174,6 +176,34 @@ app.get("/views/cya.ejs",(req,res)=>{
     res.send("Unauthorized access")
   }
 })
+
+
+app.delete('/delete_material/:materialId',async (req,res)=>{
+  const m_id=parseInt(req.params.materialId);
+  const db=new pg.Client(dbConfig);
+  try{
+      await db.connect();
+      const success= await db.query("DELETE  FROM materials WHERE d_id =$1",[m_id]);
+      if(success.rowCount>0){
+        res.json({ success: true, message: 'Material deleted successfully' });
+  } else{
+    res.status(404).json({ success: false, message: 'Material not found' });
+  }
+  }catch(error){
+    console.error('Error executing DELETE query:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }finally{
+    db.end((endErr) => {
+      if (endErr) {
+        console.error("Connection couldn't terminate", endErr);
+      } else {
+        console.log("Connection terminated successfully");
+      }
+    });
+  }
+  
+})
+
 
 
 app.post("/register",async (req,res)=>{
@@ -239,11 +269,51 @@ app.post("/register",async (req,res)=>{
     app.get("/views/cymc.ejs",(req,res)=>{
       const usermode=req.session.mode;
       if(usermode==='teacher'){
-        res.render("cym.ejs")
+        res.redirect("cym.ejs")
       }else{
         res.redirect("cyms.ejs")
       }
     })
+
+
+
+
+
+
+    app.get("/views/cym.ejs",async (req,res)=>{
+      const db = new pg.Client(dbConfig);
+  
+      try {
+          await db.connect();
+          console.log("Connected to the database");
+  
+          // Retrieve materials
+          const materials = await db.query("SELECT d_id, d_name FROM materials");
+          console.log("Materials retrieved from the database:", materials.rows);
+  
+          // Check if materials are empty
+          if (materials.rows.length === 0) {
+              console.log("No materials to display");
+              res.status(404).send("No materials to display");
+              return;
+          } else {
+              // Render the template with materials
+              res.render("cym.ejs", { materials: materials.rows });
+          }
+      } catch (error) {
+          console.error("Error:", error);
+          res.status(500).send("Server error");
+      } finally {
+          // Close the database connection
+          db.end();
+      }
+    })
+
+
+
+
+
+
 
     app.get("/views/cyms.ejs", async (req, res) => {
       const db = new pg.Client(dbConfig);

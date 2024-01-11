@@ -9,10 +9,20 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #3498db, #e74c3c); /* Gradient background */
+            color: #fff; /* Text color */
+            min-height: 100vh; /* Minimum height to cover the entire viewport */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         h1 {
             text-align: center;
+            margin-top: 20px;
         }
 
         ul {
@@ -29,7 +39,7 @@
 
         a {
             text-decoration: none;
-            color: #333;
+            color: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -44,11 +54,63 @@
         form {
             display: none;
             text-align: center;
+            margin-top: 20px;
+            position: relative;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1; /* Ensure the form appears above other elements */
         }
 
-        #uploadLink:hover + form,
-        form:hover {
+        li.active form {
             display: block;
+        }
+
+        .materials-list {
+            text-align: center;
+            margin-top: 20px;
+            max-width: 600px; /* Limit the width of the materials list for better readability */
+        }
+
+        .materials-list ul {
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .materials-list li {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Hide overflowing content */
+            position: relative;
+        }
+
+        .screen-icon {
+            font-size: 48px;
+            color: #2ecc71; /* Green color for the computer screen */
+            margin-bottom: 10px;
+        }
+
+        .delete-button {
+            cursor: pointer;
+            margin-top: 5px;
+            background-color: #e74c3c;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
         }
     </style>
 </head>
@@ -57,8 +119,8 @@
     <h1>Material Upload</h1>
 
     <ul>
-        <li>
-            <a id="uploadLink">
+        <li class="active">
+            <a id="uploadLink" onclick="toggleForm()">
                 <i class="fas fa-folder folder-icon"></i>
                 Upload Materials
             </a>
@@ -68,6 +130,53 @@
             </form>
         </li>
     </ul>
+
+    <div class="materials-list">
+        <h2>Materials List</h2>
+        <ul>
+            <% for (let material of materials) { %>
+                <li>
+                    <a href="/material/<%= material.d_id %>">
+                        <i class="fas fa-desktop screen-icon"></i> <!-- Computer screen icon -->
+                        <%= material.d_name %>
+                    </a>
+                    <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
+                </li>
+            <% } %> 
+        </ul>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const uploadLink = document.getElementById('uploadLink');
+            const li = uploadLink.parentElement;
+            li.classList.toggle('active');
+        }
+
+        function deleteMaterial(materialId) {
+            if (confirm("Are you sure you want to delete this material?")) {
+                fetch(`/delete_material/${materialId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Material deleted:', data);
+                    document.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error deleting material:', error);
+                });
+            }
+        }
+    </script>
 </body>
 
 </html>
