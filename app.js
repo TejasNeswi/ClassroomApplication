@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import cookieParser from "cookie-parser";
-
+import multer from "multer";
 
 const app = express();
 const dbConfig = {
@@ -15,7 +15,18 @@ const dbConfig = {
   port: 5432,
 };
 
+//configuring multer
+const storage=multer.memoryStorage();
+const upload =multer({storage});
+
+
+
+
+
 app.set('view engine','ejs')
+
+
+
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
 app.use(cookieParser());
@@ -38,6 +49,7 @@ app.get("/register",(req,res)=>{
     res.render("register.ejs");
 })
 app.get("/login",(req,res)=>{
+  req.session.destroy();
   res.render("login.ejs")
 })
 
@@ -190,6 +202,102 @@ app.post("/register",async (req,res)=>{
       }
     });
     
+
+    app.post('/upload_material', upload.single('materialUpload'), async (req, res) => {
+        const usermode=req.session.mode
+        if(usermode!=='teacher'){
+          res.send("Unauthorized action")
+        }
+        const fileName = req.file.originalname;
+        const fileData = req.file.buffer;
+        const db= new pg.Client(dbConfig)
+       try{
+        await db.connect();
+        // Use the pool to insert the file into the database
+        const result = await db.query('INSERT INTO materials (d_name,doc)  VALUES ($1, $2) RETURNING d_id', [fileName, fileData]);
+    
+        res.status(201).json({ d_id: result.rows[0].id, message: 'File uploaded successfully!' });
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      } finally {
+        db.end((endErr) => {
+          if (endErr) {
+            console.error("Connection couldn't terminate", endErr);
+          } else {
+            console.log("Connection terminated successfully");
+          }
+        });
+      }
+
+      
+    });
+    app.get("/views/cymc.ejs",(req,res)=>{
+      const usermode=req.session.mode;
+      if(usermode==='teacher'){
+        res.render("cym.ejs")
+      }else{
+        res.redirect("cyms.ejs")
+      }
+    })
+
+    app.get("/views/cyms.ejs", async (req, res) => {
+      const db = new pg.Client(dbConfig);
+  
+      try {
+          await db.connect();
+          console.log("Connected to the database");
+  
+          // Retrieve materials
+          const materials = await db.query("SELECT d_id, d_name FROM materials");
+          console.log("Materials retrieved from the database:", materials.rows);
+  
+          // Check if materials are empty
+          if (materials.rows.length === 0) {
+              console.log("No materials to display");
+              res.status(404).send("No materials to display");
+              return;
+          } else {
+              // Render the template with materials
+              res.render("cyms.ejs", { materials: materials.rows });
+          }
+      } catch (error) {
+          console.error("Error:", error);
+          res.status(500).send("Server error");
+      } finally {
+          // Close the database connection
+          db.end();
+      }
+  });
+  
+  app.get('/material/:id', async (req, res) => {
+      const materialId = req.params.id;
+      const db = new pg.Client(dbConfig);
+  
+      try {
+          await db.connect();
+          const result = await db.query('SELECT d_name, doc FROM materials WHERE d_id = $1', [materialId]);
+          const material = result.rows[0];
+  
+          if (!material) {
+              res.status(404).send('Material not found');
+              return;
+          }
+  
+          // Assuming you want to serve a PDF file, adjust the content type accordingly
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', `inline; filename="${material.d_name}"`);
+          res.send(material.doc);
+      } catch (error) {
+          console.error('Error retrieving material:', error);
+          res.status(500).send('Internal Server Error');
+      } finally {
+          db.end();
+      }
+  });
+  
+
+
     app.listen(3000, () => {
       console.log("Server open..");
     });

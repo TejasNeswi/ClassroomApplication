@@ -50,24 +50,32 @@
         form:hover {
             display: block;
         }
+
+        .materials-list {
+            margin-top: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
-    <h1>Material Upload</h1>
+    <h1>Materials</h1>
 
-    <ul>
-        <li>
-            <a id="uploadLink">
-                <i class="fas fa-folder folder-icon"></i>
-                Upload Materials
-            </a>
-            <form action="/upload_material" method="post" enctype="multipart/form-data">
-                <input type="file" name="materialUpload" accept=".pdf" required>
-                <button type="submit">Upload</button>
-            </form>
-        </li>
-    </ul>
+
+    <div class="materials-list">
+        <h2>Materials List</h2>
+        <ul>
+             <% for (let material of materials) { %>
+                <li>
+                    <% console.log("Material ID ") %>
+                    <a href="/material/<%= material.d_id %>">
+                        <i class="fas fa-file"></i>
+                        <%= material.d_name %>
+                    </a>
+                </li>
+            <% } %> 
+        </ul>
+    </div>
 </body>
 
 </html>
