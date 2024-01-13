@@ -138,6 +138,88 @@ app.get("/views/cy.ejs", (req, res) => {
   
 });
 
+//get request to attendance page
+app.get("/views/cya.ejs",(req,res)=>{
+  const usermode=req.session.mode;
+  if(usermode==='admin'||usermode==='teacher'){
+    res.render("cya.ejs")
+  }else{
+    res.send("Unauthorized access")
+  }
+})
+
+
+//get request to material page
+app.get("/views/cym.ejs",async (req,res)=>{
+  const db = new pg.Client(dbConfig);
+
+  try {
+      await db.connect();
+      console.log("Connected to the database");
+
+      // Retrieve materials
+      const materials = await db.query("SELECT d_id, d_name FROM materials");
+      
+
+      // Check if materials are empty
+      if (materials.rows.length === 0) {
+          res.status(404).send("No materials to display");
+          return;
+      } else {
+          // Render the template with materials
+          res.render("cym.ejs", { materials: materials.rows });
+      }
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Server error");
+  } finally {
+      // Close the database connection
+      db.end();
+  }
+})
+
+// verification for student or teacher mode
+app.get("/views/cymc.ejs",(req,res)=>{
+  const usermode=req.session.mode;
+  if(usermode==='teacher'){
+    res.redirect("cym.ejs")
+  }else{
+    res.redirect("cyms.ejs")
+  }
+})
+
+//rendering material for cy students
+app.get("/views/cyms.ejs", async (req, res) => {
+  const db = new pg.Client(dbConfig);
+
+  try {
+      await db.connect();
+      console.log("Connected to the database");
+
+      // Retrieve materials
+      const materials = await db.query("SELECT d_id, d_name FROM materials");
+      console.log("Materials retrieved from the database:", materials.rows);
+
+      // Check if materials are empty
+      if (materials.rows.length === 0) {
+          console.log("No materials to display");
+          res.status(404).send("No materials to display");
+          return;
+      } else {
+          // Render the template with materials
+          res.render("cyms.ejs", { materials: materials.rows });
+      }
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Server error");
+  } finally {
+      // Close the database connection
+      db.end();
+  }
+});
+
+
+
 // Handles get requests to cse
 app.get("/views/cse.ejs", (req, res) => {
   const userSec = req.session.sec;
@@ -167,16 +249,8 @@ app.get("/views/cd.ejs",(req,res)=>{
 
 
 
-app.get("/views/cya.ejs",(req,res)=>{
-  const usermode=req.session.mode;
-  if(usermode==='admin'||usermode==='teacher'){
-    res.render("cya.ejs")
-  }else{
-    res.send("Unauthorized access")
-  }
-})
 
-
+//deleting code 
 app.delete('/delete_material/:materialId',async (req,res)=>{
   const m_id=parseInt(req.params.materialId);
   const db=new pg.Client(dbConfig);
@@ -265,83 +339,21 @@ app.post("/register",async (req,res)=>{
 
       
     });
-    app.get("/views/cymc.ejs",(req,res)=>{
-      const usermode=req.session.mode;
-      if(usermode==='teacher'){
-        res.redirect("cym.ejs")
-      }else{
-        res.redirect("cyms.ejs")
-      }
-    })
+    
 
 
 
 
 
 
-    app.get("/views/cym.ejs",async (req,res)=>{
-      const db = new pg.Client(dbConfig);
-  
-      try {
-          await db.connect();
-          console.log("Connected to the database");
-  
-          // Retrieve materials
-          const materials = await db.query("SELECT d_id, d_name FROM materials");
-          console.log("Materials retrieved from the database:", materials.rows);
-  
-          // Check if materials are empty
-          if (materials.rows.length === 0) {
-              console.log("No materials to display");
-              res.status(404).send("No materials to display");
-              return;
-          } else {
-              // Render the template with materials
-              res.render("cym.ejs", { materials: materials.rows });
-          }
-      } catch (error) {
-          console.error("Error:", error);
-          res.status(500).send("Server error");
-      } finally {
-          // Close the database connection
-          db.end();
-      }
-    })
+    
 
 
 
 
 
 
-
-    app.get("/views/cyms.ejs", async (req, res) => {
-      const db = new pg.Client(dbConfig);
-  
-      try {
-          await db.connect();
-          console.log("Connected to the database");
-  
-          // Retrieve materials
-          const materials = await db.query("SELECT d_id, d_name FROM materials");
-          console.log("Materials retrieved from the database:", materials.rows);
-  
-          // Check if materials are empty
-          if (materials.rows.length === 0) {
-              console.log("No materials to display");
-              res.status(404).send("No materials to display");
-              return;
-          } else {
-              // Render the template with materials
-              res.render("cyms.ejs", { materials: materials.rows });
-          }
-      } catch (error) {
-          console.error("Error:", error);
-          res.status(500).send("Server error");
-      } finally {
-          // Close the database connection
-          db.end();
-      }
-  });
+    
   
   app.get('/material/:id', async (req, res) => {
       const materialId = req.params.id;
