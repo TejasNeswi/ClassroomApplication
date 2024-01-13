@@ -45,20 +45,21 @@ app.use(
   }}
   )
 )
+
+//get request to the homepage
 app.get("/",(req,res)=>{
     res.render("home.ejs");
 })
 
-app.get("/register",(req,res)=>{
-    res.render("register.ejs");
-})
+
+
+//get request to the login form
 app.get("/login",(req,res)=>{
-  req.session.destroy();
   res.render("login.ejs")
 })
 
 
-
+//get request to the user registration
 app.get("/views/userreg.ejs",(req,res)=>{
   const usermode =req.session.mode;
   if(usermode=="admin"){
@@ -78,17 +79,17 @@ app.get("views\\class2.ejs",(req,res)=>{
 })
 
 
-
+//login page server code 
 app.post("/login", async (req, res) => {
-  const username = req.body["username"];
-  const password = req.body["password"];
+  const username = req.body["username"].trim();
+  const password = req.body["password"].trim();
   const salt = await bcrypt.genSalt(5);
   const hash = await bcrypt.hash(password, salt);
   const db = new pg.Client(dbConfig);
-
+  console.log(username)
   try {
       await db.connect();
-      const result = await db.query("SELECT * FROM userlogin WHERE uname =$1", [username]);
+      const result = await db.query("SELECT * FROM userlogin WHERE uname = $1", [username]);
       const storedHash = result.rows[0].upassword;
       const mode = result.rows[0].umode;
       const sec = result.rows[0].div;
@@ -114,8 +115,6 @@ app.post("/login", async (req, res) => {
           } else {
               console.log("Connection closed successfully");
           }
-          // No need to check req.session.authenticated here
-          // Render the home page here after ensuring the database connection is closed
           
       });
   }
@@ -123,7 +122,7 @@ app.post("/login", async (req, res) => {
 
 app.get("/logout.ejs",(req,res)=>{
   req.session.destroy();
-  res.redirect("/login.ejs")
+  res.redirect("/login")
 })
 // Handles get requests to cy
 app.get("/views/cy.ejs", (req, res) => {
@@ -375,5 +374,3 @@ app.post("/register",async (req,res)=>{
     app.listen(3000, () => {
       console.log("Server open..");
     });
-
-    //if (comp.rows[0].password === result.rows[0].password)
