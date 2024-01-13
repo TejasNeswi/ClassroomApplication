@@ -152,23 +152,17 @@ app.get("/views/cya.ejs",(req,res)=>{
 //get request to material page
 app.get("/views/cym.ejs",async (req,res)=>{
   const db = new pg.Client(dbConfig);
-
+  const usersec=req.session.sec
   try {
       await db.connect();
       console.log("Connected to the database");
 
       // Retrieve materials
-      const materials = await db.query("SELECT d_id, d_name FROM materials");
+      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
       
 
-      // Check if materials are empty
-      if (materials.rows.length === 0) {
-          res.status(404).send("No materials to display");
-          return;
-      } else {
-          // Render the template with materials
           res.render("cym.ejs", { materials: materials.rows });
-      }
+      
   } catch (error) {
       console.error("Error:", error);
       res.status(500).send("Server error");
@@ -191,24 +185,26 @@ app.get("/views/cymc.ejs",(req,res)=>{
 //rendering material for cy students
 app.get("/views/cyms.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
-
+  const usersec=req.session.sec
+ let noMaterials=false;
   try {
       await db.connect();
       console.log("Connected to the database");
-
+      
       // Retrieve materials
-      const materials = await db.query("SELECT d_id, d_name FROM materials");
-      console.log("Materials retrieved from the database:", materials.rows);
-
-      // Check if materials are empty
-      if (materials.rows.length === 0) {
-          console.log("No materials to display");
-          res.status(404).send("No materials to display");
-          return;
-      } else {
-          // Render the template with materials
-          res.render("cyms.ejs", { materials: materials.rows });
+      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
+     
+      if(materials.rows===0){
+        noMaterials=true
+        res.render("cyms.ejs",{materials:[],noMaterials:noMaterials})
+        
       }
+        else{
+          // Render the template with materials
+          res.render("cyms.ejs", { materials: materials.rows,noMaterials:noMaterials });
+          
+        }
+      
   } catch (error) {
       console.error("Error:", error);
       res.status(500).send("Server error");
@@ -220,18 +216,6 @@ app.get("/views/cyms.ejs", async (req, res) => {
 
 
 
-// Handles get requests to cse
-app.get("/views/cse.ejs", (req, res) => {
-  const userSec = req.session.sec;
-  const userMode = req.session.mode;
-
-      if (userMode === 'admin' || (userMode !== 'admin' && userSec === "CSE")) {
-          res.render("cy.ejs");
-      } else {
-          res.send("Unauthorized access");
-      }
-  
-});
 
 //handles get requests to cd
 app.get("/views/cd.ejs",(req,res)=>{ 
@@ -246,8 +230,183 @@ app.get("/views/cd.ejs",(req,res)=>{
   
 })
 
+//verification for usermode
+app.get("/views/cdc",(req,res)=>{
+  const usermode=req.session.mode;
+  if(usermode==='teacher'){
+    res.redirect("cdm.ejs")
+  }else{
+    res.redirect("cdms.ejs")
+  }
+})
 
 
+//rendering material for cd students
+app.get("/views/cdms.ejs", async (req, res) => {
+  const db = new pg.Client(dbConfig);
+  const usersec=req.session.sec
+  console.log(usersec)
+ let noMaterials=false;
+  try {
+      await db.connect();
+      console.log("Connected to the database");
+      
+      // Retrieve materials
+      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
+      console.log("Materials retrieved from the database:", materials.rows);
+      if(materials.rows===0){
+        noMaterials=true
+        res.render("cdms.ejs",{materials:[],noMaterials:noMaterials})
+        
+      }
+        else{
+          // Render the template with materials
+          res.render("cdms.ejs", { materials: materials.rows,noMaterials:noMaterials });
+          
+        }
+      
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Server error");
+  } finally {
+      // Close the database connection
+      db.end();
+  }
+});
+
+
+
+//get request to attendance page
+app.get("/views/cda.ejs",(req,res)=>{
+  const usermode=req.session.mode;
+  if(usermode==='admin'||usermode==='teacher'){
+    res.render("cda.ejs")
+  }else{
+    res.send("Unauthorized access")
+  }
+})
+
+
+//get request to material page for teachers
+app.get("/views/cdm.ejs",async (req,res)=>{
+  const db = new pg.Client(dbConfig);
+  const usersec=req.session.sec
+  try {
+      await db.connect();
+      console.log("Connected to the database");
+
+      // Retrieve materials
+      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
+      
+
+          res.render("cdm.ejs", { materials: materials.rows });
+      
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Server error");
+  } finally {
+      // Close the database connection
+      db.end();
+  }
+})
+
+
+
+
+// Handles get requests to cse
+app.get("/views/cse.ejs", (req, res) => {
+  const userSec = req.session.sec;
+  const userMode = req.session.mode;
+
+      if (userMode === 'admin' || (userMode !== 'admin' && userSec === "CSE")) {
+          res.render("cse.ejs");
+      } else {
+          res.send("Unauthorized access");
+      }
+  
+});
+
+
+
+
+//verification for usermode
+app.get("/views/csc",(req,res)=>{
+  const usermode=req.session.mode;
+  if(usermode==='teacher'){
+    res.redirect("csm.ejs")
+  }else{
+    res.redirect("csms.ejs")
+  }
+})
+
+
+//rendering material for cs students
+app.get("/views/csms.ejs", async (req, res) => {
+  const db = new pg.Client(dbConfig);
+  const usersec=req.session.sec
+  console.log(usersec)
+ let noMaterials=false;
+  try {
+      await db.connect();
+      console.log("Connected to the database");
+      
+      // Retrieve materials
+      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
+      if(materials.rows===0){
+        noMaterials=true
+        res.render("csms.ejs",{materials:[],noMaterials:noMaterials})
+       
+      }
+        else{
+          // Render the template with materials
+          res.render("csms.ejs", { materials: materials.rows,noMaterials:noMaterials });
+         
+        }
+      
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Server error");
+  } finally {
+      // Close the database connection
+      db.end();
+  }
+});
+
+
+
+//get request to attendance page
+app.get("/views/csa.ejs",(req,res)=>{
+  const usermode=req.session.mode;
+  if(usermode==='admin'||usermode==='teacher'){
+    res.render("csa.ejs")
+  }else{
+    res.send("Unauthorized access")
+  }
+})
+
+
+//get request to material page for teachers
+app.get("/views/csm.ejs",async (req,res)=>{
+  const db = new pg.Client(dbConfig);
+  const usersec=req.session.sec
+  try {
+      await db.connect();
+      console.log("Connected to the database");
+
+      // Retrieve materials
+      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
+      
+
+          res.render("csm.ejs", { materials: materials.rows });
+      
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Server error");
+  } finally {
+      // Close the database connection
+      db.end();
+  }
+})
 
 
 //deleting code 
@@ -293,8 +452,7 @@ app.post("/register",async (req,res)=>{
         const result = await db.query("INSERT INTO userlogin VALUES ($1, $2,$3,$4)", [username, hash,type,sec]);
         
         console.log("Query successful");
-        
-        res.redirect("/");
+        res.render("homepg.ejs")
       } catch (err) {
         console.error("Error executing query", err);
         res.status(500).json({ error: "Internal Server Error" });
@@ -312,6 +470,7 @@ app.post("/register",async (req,res)=>{
 
     app.post('/upload_material', upload.single('materialUpload'), async (req, res) => {
         const usermode=req.session.mode
+        const usersec=req.session.sec
         if(usermode!=='teacher'){
           res.send("Unauthorized action")
         }
@@ -321,9 +480,8 @@ app.post("/register",async (req,res)=>{
        try{
         await db.connect();
         // Use the pool to insert the file into the database
-        const result = await db.query('INSERT INTO materials (d_name,doc)  VALUES ($1, $2) RETURNING d_id', [fileName, fileData]);
-    
-        res.status(201).json({ d_id: result.rows[0].id, message: 'File uploaded successfully!' });
+        const result = await db.query('INSERT INTO materials (d_name,doc,div)  VALUES ($1, $2,$3) RETURNING d_id', [fileName, fileData,usersec]);
+        res.redirect("/views/cym.ejs")
       } catch (error) {
         console.error('Error uploading file:', error);
         res.status(500).json({ error: 'Internal Server Error' });
