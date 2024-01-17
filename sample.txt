@@ -1,0 +1,68 @@
+const pool = new pg.Pool(dbConfig);
+
+app.post("/register", upload.single('excelFile'), async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const fileBuffer = req.file.buffer;
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(fileBuffer);
+    const worksheet = workbook.getWorksheet(1);
+
+    await client.query('BEGIN');
+
+    const promises = [];
+
+    for (let rowNumber = 2; rowNumber <= worksheet.rowCount; rowNumber++) {
+      const row = worksheet.getRow(rowNumber);
+
+      const username = String(row.getCell(1).value).trim();
+      const password = String(row.getCell(2).value).trim();
+      const type = String(row.getCell(3).value).trim();
+      const sec = String(row.getCell(4).value).trim();
+      const sub = String(row.getCell(5).value).trim();
+
+      const passwordString = String(password);
+
+      try {
+        const saltRounds = 5;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hash = await bcrypt.hash(passwordString, salt);
+
+        let queryText, queryParams;
+
+        if (type === "teacher") {
+          queryText = `
+            INSERT INTO your_table_name (uname, upassword, umode, div, subject)
+            VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT (div, subject) DO NOTHING`;
+          queryParams = [username, hash, type, sec, sub];
+        } else {
+          queryText = `
+            INSERT INTO your_table_name (uname, upassword, umode, div)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (uname) DO NOTHING`;
+          queryParams = [username, hash, type, sec];
+        }
+
+        const queryPromise = client.query(queryText, queryParams);
+        promises.push(queryPromise);
+      } catch (hashError) {
+        console.error('Error hashing password for user', username, hashError);
+      }
+    }
+
+    await Promise.all(promises);
+    await client.query('COMMIT');
+    console.log("Data inserted successfully");
+    res.render("homepg.ejs");
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error("Error processing Excel file", err);
+    res.status(500).json({ error: err.message || "Internal Server Error" });
+  } finally {
+    client.release();
+    console.log("Connection released");
+  }
+});
