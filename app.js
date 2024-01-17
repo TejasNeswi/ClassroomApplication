@@ -8,6 +8,7 @@ import multer from "multer";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path'
+import ExcelJS from 'exceljs'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -83,10 +84,11 @@ app.get("views\\class2.ejs",(req,res)=>{
 app.post("/login", async (req, res) => {
   const username = req.body["username"].trim();
   const password = req.body["password"].trim();
+  
   const salt = await bcrypt.genSalt(5);
   const hash = await bcrypt.hash(password, salt);
   const db = new pg.Client(dbConfig);
-  console.log(username)
+ 
   try {
       await db.connect();
       const result = await db.query("SELECT * FROM userlogin WHERE uname = $1", [username]);
@@ -95,7 +97,7 @@ app.post("/login", async (req, res) => {
       const sec = result.rows[0].div;
       req.session.sec=sec
       req.session.mode=mode
-
+      
       if (await bcrypt.compare(password, storedHash)) {
         
         res.render("homepg.ejs")
@@ -438,35 +440,84 @@ app.delete('/delete_material/:materialId',async (req,res)=>{
 
 
 
-app.post("/register",async (req,res)=>{
-    const username=req.body["username"];
-    const password=req.body["password"];
-    const type=req.body["usertype"]
-    const sec=req.body["section"]
-    const salt= await bcrypt.genSalt(5);
-    const hash=await bcrypt.hash(password,salt);
-    const db=new pg.Client(dbConfig);
-    try {
-        await db.connect();
-    
-        const result = await db.query("INSERT INTO userlogin VALUES ($1, $2,$3,$4)", [username, hash,type,sec]);
-        
-        console.log("Query successful");
-        res.render("homepg.ejs")
-      } catch (err) {
-        console.error("Error executing query", err);
-        res.status(500).json({ error: "Internal Server Error" });
-      } finally {
-        db.end((endErr) => {
-          if (endErr) {
-            console.error("Connection couldn't terminate", endErr);
-          } else {
-            console.log("Connection terminated successfully");
-          }
-        });
+const pool = new pg.Pool(dbConfig);
+
+app.post("/register", upload.single('excelFile'), async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const fileBuffer = req.file.buffer;
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(fileBuffer);
+    const worksheet = workbook.getWorksheet(1);
+
+    await client.query('BEGIN');
+
+    const promises = [];
+
+    for (let rowNumber = 2; rowNumber <= worksheet.rowCount; rowNumber++) {
+      const row = worksheet.getRow(rowNumber);
+
+      const username = String(row.getCell(1).value).trim();
+      const password = String(row.getCell(2).value).trim();
+      const type = String(row.getCell(3).value).trim();
+      const sec = String(row.getCell(4).value).trim();
+      const sub = String(row.getCell(5).value).trim();
+
+      const passwordString = String(password);
+
+      try {
+        const saltRounds = 5;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hash = await bcrypt.hash(passwordString, salt);
+
+        let queryText, queryParams;
+
+        if (type === "teacher") {
+          queryText = `
+            INSERT INTO userlogin (uname, upassword, umode, div, subject)
+            VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT (div, subject) DO NOTHING`;
+          queryParams = [username, hash, type, sec, sub];
+        } else {
+          queryText = `
+            INSERT INTO userlogin (uname, upassword, umode, div)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (uname) DO NOTHING`;
+          queryParams = [username, hash, type, sec];
+        }
+
+        const queryPromise = client.query(queryText, queryParams)
+          .then(result => {
+            // Check if the row was actually inserted
+            if (result.rowCount === 1) {
+              console.log(`User ${username} inserted successfully`);
+            } else {
+              console.log(`User ${username} already exists or conflict occurred`);
+              // Handle conflict response
+              res.status(409).json({ error: `User ${username} already exists or conflict occurred` });
+            }
+          });
+        promises.push(queryPromise);
+      } catch (hashError) {
+        console.error('Error hashing password for user', username, hashError);
       }
-    });
-    
+    }
+
+    await Promise.all(promises);
+    await client.query('COMMIT');
+    console.log("Data inserted successfully");
+    res.render("homepg.ejs");
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error("Error processing Excel file", err);
+    res.status(500).json({ error: err.message || "Internal Server Error" });
+  } finally {
+    client.release();
+    console.log("Connection released");
+  }
+});
 
     app.post('/upload_material', upload.single('materialUpload'), async (req, res) => {
         const usermode=req.session.mode

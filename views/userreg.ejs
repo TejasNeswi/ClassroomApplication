@@ -57,31 +57,11 @@
 </head>
 
 <body>
-    <form action="/register" method="post">
+    <form action="/register" method="post" enctype="multipart/form-data">
         <h1>Signup</h1>
         
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-
-        <label for="usertype">User Type:</label>
-        <select id="usertype" name="usertype" required>
-            <option value="admin">Admin</option>
-            <option value="teacher">Teacher</option>
-            <option value="user">Student</option>
-            
-        </select>
-
-        
-        <label for="section">Section:</label>
-        <select id="section" name="section" required>
-            <option value="CY">CY</option>
-            <option value="CD">CD</option>
-            <option value="CSE">CSE</option>
-            
-        </select>
+        <label for="excelFile">Upload Excel File:</label>
+        <input type="file" id="excelFile" name="excelFile" accept=".xls, .xlsx" required>
 
         <button type="submit">Sign Up</button>
     </form>
