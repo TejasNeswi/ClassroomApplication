@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path'
 import ExcelJS from 'exceljs'
+import { render } from "ejs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -70,15 +71,6 @@ app.get("/views/userreg.ejs",(req,res)=>{
   }
 })
 
-app.get("views\\class2.ejs",(req,res)=>{
-
-  if(req.session.authenticated){
-    res.render("class2.ejs");
-  }else{
-    res.send("Not authenticated");
-  }
-})
-
 
 //login page server code 
 app.post("/login", async (req, res) => {
@@ -99,9 +91,12 @@ app.post("/login", async (req, res) => {
       req.session.mode=mode
       
       if (await bcrypt.compare(password, storedHash)) {
+        if(mode=='admin'){
+          res.render("homepg.ejs");
+        }else{
         
-        res.render("homepg.ejs")
-          
+        res.render("cd.ejs",{pageTitle:req.session.sec,mode:req.session.mode})
+        } 
       } else {
           res.send("Username or password doesn't match");
           return; // Exit the function early if password doesn't match
@@ -126,95 +121,7 @@ app.get("/logout.ejs",(req,res)=>{
   req.session.destroy();
   res.redirect("/login")
 })
-// Handles get requests to cy
-app.get("/views/cy.ejs", (req, res) => {
-  const userSec = req.session.sec;
-  const userMode = req.session.mode;
-  console.log(userMode);
 
-      if (userMode == 'admin' || (userMode !== 'admin' && userSec == "CY")) {
-          res.render("cy.ejs");
-      } else {
-          res.send("Unauthorized access");
-      }
-  
-});
-
-//get request to attendance page
-app.get("/views/cya.ejs",(req,res)=>{
-  const usermode=req.session.mode;
-  if(usermode==='admin'||usermode==='teacher'){
-    res.render("cya.ejs")
-  }else{
-    res.send("Unauthorized access")
-  }
-})
-
-
-//get request to material page
-app.get("/views/cym.ejs",async (req,res)=>{
-  const db = new pg.Client(dbConfig);
-  const usersec=req.session.sec
-  try {
-      await db.connect();
-      console.log("Connected to the database");
-
-      // Retrieve materials
-      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
-      
-
-          res.render("cym.ejs", { materials: materials.rows });
-      
-  } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send("Server error");
-  } finally {
-      // Close the database connection
-      db.end();
-  }
-})
-
-// verification for student or teacher mode
-app.get("/views/cymc.ejs",(req,res)=>{
-  const usermode=req.session.mode;
-  if(usermode==='teacher'){
-    res.redirect("cym.ejs")
-  }else{
-    res.redirect("cyms.ejs")
-  }
-})
-
-//rendering material for cy students
-app.get("/views/cyms.ejs", async (req, res) => {
-  const db = new pg.Client(dbConfig);
-  const usersec=req.session.sec
- let noMaterials=false;
-  try {
-      await db.connect();
-      console.log("Connected to the database");
-      
-      // Retrieve materials
-      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
-     
-      if(materials.rows===0){
-        noMaterials=true
-        res.render("cyms.ejs",{materials:[],noMaterials:noMaterials})
-        
-      }
-        else{
-          // Render the template with materials
-          res.render("cyms.ejs", { materials: materials.rows,noMaterials:noMaterials });
-          
-        }
-      
-  } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send("Server error");
-  } finally {
-      // Close the database connection
-      db.end();
-  }
-});
 
 
 
@@ -315,100 +222,6 @@ app.get("/views/cdm.ejs",async (req,res)=>{
 
 
 
-// Handles get requests to cse
-app.get("/views/cse.ejs", (req, res) => {
-  const userSec = req.session.sec;
-  const userMode = req.session.mode;
-
-      if (userMode === 'admin' || (userMode !== 'admin' && userSec === "CSE")) {
-          res.render("cse.ejs");
-      } else {
-          res.send("Unauthorized access");
-      }
-  
-});
-
-
-
-
-//verification for usermode
-app.get("/views/csc",(req,res)=>{
-  const usermode=req.session.mode;
-  if(usermode==='teacher'){
-    res.redirect("csm.ejs")
-  }else{
-    res.redirect("csms.ejs")
-  }
-})
-
-
-//rendering material for cs students
-app.get("/views/csms.ejs", async (req, res) => {
-  const db = new pg.Client(dbConfig);
-  const usersec=req.session.sec
-  console.log(usersec)
- let noMaterials=false;
-  try {
-      await db.connect();
-      console.log("Connected to the database");
-      
-      // Retrieve materials
-      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
-      if(materials.rows===0){
-        noMaterials=true
-        res.render("csms.ejs",{materials:[],noMaterials:noMaterials})
-       
-      }
-        else{
-          // Render the template with materials
-          res.render("csms.ejs", { materials: materials.rows,noMaterials:noMaterials });
-         
-        }
-      
-  } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send("Server error");
-  } finally {
-      // Close the database connection
-      db.end();
-  }
-});
-
-
-
-//get request to attendance page
-app.get("/views/csa.ejs",(req,res)=>{
-  const usermode=req.session.mode;
-  if(usermode==='admin'||usermode==='teacher'){
-    res.render("csa.ejs")
-  }else{
-    res.send("Unauthorized access")
-  }
-})
-
-
-//get request to material page for teachers
-app.get("/views/csm.ejs",async (req,res)=>{
-  const db = new pg.Client(dbConfig);
-  const usersec=req.session.sec
-  try {
-      await db.connect();
-      console.log("Connected to the database");
-
-      // Retrieve materials
-      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
-      
-
-          res.render("csm.ejs", { materials: materials.rows });
-      
-  } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send("Server error");
-  } finally {
-      // Close the database connection
-      db.end();
-  }
-})
 
 
 //deleting code 
@@ -484,7 +297,7 @@ app.post("/register", upload.single('excelFile'), async (req, res) => {
           queryText = `
             INSERT INTO userlogin (uname, upassword, umode, div)
             VALUES ($1, $2, $3, $4)
-            ON CONFLICT (uname) DO NOTHING`;
+            ON CONFLICT (uname,div) DO NOTHING`;
           queryParams = [username, hash, type, sec];
         }
 
@@ -518,6 +331,70 @@ app.post("/register", upload.single('excelFile'), async (req, res) => {
     console.log("Connection released");
   }
 });
+
+app.get("/views/reset.ejs", (req, res) => {
+  const errorMessage = req.query.error ? 'An error occurred during password reset.' : '';
+  const successMessage = req.query.success ? 'Password reset successfully.' : '';
+
+  res.render("reset.ejs", { errorMessage, successMessage });
+});
+
+
+app.post('/reset-password', async (req, res) => {
+  const username = req.body.username.trim();
+  const oldPassword = req.body.oldPassword.trim();
+  const newPassword = req.body.newPassword.trim();
+  const confirmPassword = req.body.confirmPassword.trim();
+
+  // Validate new password and confirmation
+  if (newPassword !== confirmPassword) {
+    return res.redirect('/views/reset.ejs?error=Passwords do not match');
+  }
+
+  const db = new pg.Client(dbConfig);
+
+  try {
+    await db.connect();
+
+    // Retrieve the old password from the database
+    const result = await db.query("SELECT upassword FROM userlogin WHERE uname = $1", [username]);
+
+    if (result.rows.length === 0) {
+      return res.redirect('/views/reset.ejs?error=User not found');
+    }
+
+    const oldHash = result.rows[0].upassword;
+
+    // Compare the old password with the provided old password
+    const isOldPasswordValid = await bcrypt.compare(oldPassword, oldHash);
+
+    if (!isOldPasswordValid) {
+      return res.redirect('/views/reset.ejs?error=Incorrect old password');
+    }
+
+    // Update password in the database based on the username
+    const newSalt = await bcrypt.genSalt(5);
+    const newHash = await bcrypt.hash(newPassword, newSalt);
+
+    await db.query("UPDATE userlogin SET upassword = $1 WHERE uname = $2", [newHash, username]);
+
+    res.redirect('/views/reset.ejs?success=Password reset successfully');
+  } catch (err) {
+    console.error('Error carrying out the query', err);
+    res.redirect('/views/reset.ejs?error=Internal Server Error');
+  } finally {
+    db.end((endErr) => {
+      if (endErr) {
+        console.error('Connection couldn\'t be terminated');
+      } else {
+        console.log('Connection closed successfully');
+      }
+    });
+  }
+});
+
+
+
 
     app.post('/upload_material', upload.single('materialUpload'), async (req, res) => {
         const usermode=req.session.mode

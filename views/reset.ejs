@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset</title>
+</head>
+<body>
+    <h1>Password Reset</h1>
+
+    <% if (errorMessage) { %>
+        <p style="color: red;"><%= errorMessage %></p>
+    <% } %>
+
+    <% if (successMessage) { %>
+        <p style="color: green;"><%= successMessage %></p>
+    <% } %>
+
+    <form method="POST" action="/reset-password">
+        <!-- Assuming you have a way to pass the username to the form -->
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="oldPassword">Old password</label>
+        <input type="password" name="oldPassword" id="oldPassword" required>
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" name="newPassword" required>
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+        <button type="submit">Reset Password</button>
+    </form>
+</body>
+</html>

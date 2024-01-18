@@ -43,8 +43,9 @@
     </style>
 </head>
 
+<!-- Assuming you are using a template engine like EJS -->
 <body>
-    <h1>CSE-CD</h1>
+    <h1><%= pageTitle %></h1>
 
     <ul>
         <li>
@@ -53,18 +54,28 @@
                 Materials
             </a>
         </li>
-        <li>
-            <a href="views\class2.ejs">
-                <i class="fas fa-folder folder-icon"></i>
-                CIE
-            </a>
-        </li>
-        <li>
-            <a href="/views/cda.ejs">
-                <i class="fas fa-folder folder-icon"></i>
-                Attendance
-            </a>
-        </li>
+        <% if (mode === 'teacher') { %>
+            <li>
+                <a href="views/class2.ejs">
+                    <i class="fas fa-folder folder-icon"></i>
+                    CIE
+                </a>
+            </li>
+            <li>
+                <a href="/views/cda.ejs">
+                    <i class="fas fa-folder folder-icon"></i>
+                    Attendance
+                </a>
+            </li>
+        <% } %>
+
+        <form action="/logout.ejs" method="get">
+            <button type="submit">Logout</button>
+        </form>
+
+        <form action="/views/reset.ejs" method="get">
+            <button type="submit">Reset password</button>
+        </form>
     </ul>
 </body>
 
