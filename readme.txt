@@ -1,7 +1,7 @@
 Setup instructions
 1. Clone the project
 ```
-git clone 
+git clone https://github.com/Prajwal-2304/Classroom.git
 ```
 2. Move into the directory
 ```
@@ -47,6 +47,8 @@ create table userlogin(
     umode varchar,
     div varchar,
     subject varchar
+    constraint (uname,div)
+    constraint (div,subject)
 );
 
 5:Create the first admin using the following code in query tool 
@@ -59,6 +61,7 @@ create table materials (
         d_name varchar unique,
         doc bytea,
         div varchar
+        sec varchar
 );
 
 8:Pending jobs(please update as modified)
