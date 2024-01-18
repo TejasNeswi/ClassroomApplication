@@ -33,8 +33,8 @@ https://www.postgresql.org/download/
 const dbConfig = {
   user: "postgres",
   host: "localhost",
-  database: "capitals", -change this to the database name set up by you
-  password: "[{(4better)}]", - change this to tha password set up by you
+  database: "", -change this to the database name set up by you
+  password: "", - change this to tha password set up by you
   port: 5432,
 };
 
