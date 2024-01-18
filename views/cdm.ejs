@@ -115,6 +115,7 @@
     </style>
 </head>
 
+<!-- Assuming materials is an array of objects with properties d_id, d_name, and sec -->
 <body>
     <h1>Material Upload</h1>
 
@@ -131,8 +132,8 @@
                 <label for="fileName">File Name:</label>
                 <input type="text" name="fileName" id="fileName" required>
 
-                <label for="comments">Comments:</label>
-                <textarea name="comments" id="comments" rows="4" cols="50"></textarea>
+                <label for="sec">Section/Chapter:</label>
+                <input type="text" name="sec" id="sec" required>
 
                 <button type="submit">Upload</button>
             </form>
@@ -141,17 +142,20 @@
 
     <div class="materials-list">
         <h2>Materials List</h2>
-        <ul>
-            <% for (let material of materials) { %>
-                <li>
-                    <a href="/material/<%= material.d_id %>">
-                        <i class="fas fa-desktop screen-icon"></i> <!-- Computer screen icon -->
-                        <%= material.d_name %>
-                    </a>
-                    <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
-                </li>
-            <% } %> 
-        </ul>
+        <% for (let sectionIndex in sections) { %>
+            <% const section = sections[sectionIndex]; %>
+            <div class="uploader-section">
+                <hr>
+                <h3><%= section.name %></h3>
+                <% for (let material of section.materials) { %>
+                    <div class="material-item">
+                        <i class="fas fa-desktop screen-icon"></i>
+                        <h4><%= material.d_name %></h4>
+                        <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
     </div>
 
     <script>
@@ -186,6 +190,8 @@
         }
     </script>
 </body>
+
+
 
 
 </html>

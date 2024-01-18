@@ -87,8 +87,10 @@ app.post("/login", async (req, res) => {
       const storedHash = result.rows[0].upassword;
       const mode = result.rows[0].umode;
       const sec = result.rows[0].div;
-      req.session.sec=sec
-      req.session.mode=mode
+      const sub=result.rows[0].subject;
+      req.session.sec=sec;
+      req.session.mode=mode;
+      req.session.sub=sub;
       
       if (await bcrypt.compare(password, storedHash)) {
         if(mode=='admin'){
@@ -196,20 +198,33 @@ app.get("/views/cda.ejs",(req,res)=>{
 })
 
 
-//get request to material page for teachers
-app.get("/views/cdm.ejs",async (req,res)=>{
+app.get("/views/cdm.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
-  const usersec=req.session.sec
+  const usersec = req.session.sec;
+  const sub=req.session.sub;
+
   try {
       await db.connect();
       console.log("Connected to the database");
 
       // Retrieve materials
-      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
       
+      const materialsResult = await db.query("SELECT d_id, d_name, sec FROM materials WHERE (div,subject)=($1,$2)", [usersec,sub]);
+      const materials = materialsResult.rows;
 
-          res.render("cdm.ejs", { materials: materials.rows });
-      
+      // Group materials by section
+      const sectionsMap = new Map();
+      materials.forEach(material => {
+          const sectionKey = material.sec;
+          if (!sectionsMap.has(sectionKey)) {
+              sectionsMap.set(sectionKey, []);
+          }
+          sectionsMap.get(sectionKey).push(material);
+      });
+
+      const sections = Array.from(sectionsMap, ([name, materials]) => ({ name, materials }));
+
+      res.render("cdm.ejs", { sections });
   } catch (error) {
       console.error("Error:", error);
       res.status(500).send("Server error");
@@ -217,7 +232,9 @@ app.get("/views/cdm.ejs",async (req,res)=>{
       // Close the database connection
       db.end();
   }
-})
+});
+
+
 
 
 
@@ -399,17 +416,22 @@ app.post('/reset-password', async (req, res) => {
     app.post('/upload_material', upload.single('materialUpload'), async (req, res) => {
         const usermode=req.session.mode
         const usersec=req.session.sec
+        const sub=req.session.sub
         if(usermode!=='teacher'){
           res.send("Unauthorized action")
         }
-        const fileName = req.file.originalname;
+        const fileName = req.body.fileName;
         const fileData = req.file.buffer;
+        const fileSec=req.body.sec;
         const db= new pg.Client(dbConfig)
        try{
         await db.connect();
         // Use the pool to insert the file into the database
-        const result = await db.query('INSERT INTO materials (d_name,doc,div)  VALUES ($1, $2,$3) RETURNING d_id', [fileName, fileData,usersec]);
-        res.redirect("/views/cym.ejs")
+        console.log(fileName)
+        console.log(fileSec)
+        console.log(usersec)
+        const result = await db.query('INSERT INTO materials (d_name,doc,div,subject,sec)  VALUES ($1, $2,$3,$4,$5) RETURNING d_id', [fileName, fileData,usersec,sub,fileSec]);
+        res.redirect("/views/cdm.ejs")
       } catch (error) {
         console.error('Error uploading file:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -430,17 +452,6 @@ app.post('/reset-password', async (req, res) => {
 
 
 
-
-
-    
-
-
-
-
-
-
-    
-  
   app.get('/material/:id', async (req, res) => {
       const materialId = req.params.id;
       const db = new pg.Client(dbConfig);
