@@ -72,26 +72,30 @@ a:hover {
     </style>
 </head>
 
+<!-- cdms.ejs -->
 <body>
     <h1>Materials</h1>
 
     <div class="materials-list">
         <h2>Materials List</h2>
-
-        <% if (noMaterials==true) { %>
-            <p>No elements to display</p>
-        <% } else { %>
-            <ul>
-                <% for (let material of materials) { %>
-                    <li>
-                        <% console.log("Material ID: ", material.d_id) %>
+        <% for (let sectionIndex in sections) { %>
+            <% const section = sections[sectionIndex]; %>
+            <div class="uploader-section">
+                <hr>
+                <h3><%= section.name %></h3>
+                <% for (let material of section.materials) { %>
+                    <div class="material-item">
                         <a href="/material/<%= material.d_id %>">
-                            <i class="fas fa-file"></i>
-                            <%= material.d_name %>
+                            <i class="fas fa-desktop screen-icon"></i>
+                            <h4><%= material.d_name %></h4>
                         </a>
-                    </li>
-                <% } %> 
-            </ul>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+
+        <% if (noMaterials) { %>
+            <p>No elements to display</p>
         <% } %>
     </div>
 </body>

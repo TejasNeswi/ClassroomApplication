@@ -88,16 +88,19 @@ app.post("/login", async (req, res) => {
       const mode = result.rows[0].umode;
       const sec = result.rows[0].div;
       const sub=result.rows[0].subject;
+      console.log(sec)
       req.session.sec=sec;
       req.session.mode=mode;
       req.session.sub=sub;
+      //passing the classes the teacher handles
+      const classes =await db.query("Select div from userlogin WHERE uname=$1",[username]);
       
       if (await bcrypt.compare(password, storedHash)) {
         if(mode=='admin'){
           res.render("homepg.ejs");
         }else{
         
-        res.render("cd.ejs",{pageTitle:req.session.sec,mode:req.session.mode})
+        res.render("cd.ejs",{pageTitle:req.session.sec,mode:req.session.mode,classList:classes.rows})
         } 
       } else {
           res.send("Username or password doesn't match");
@@ -155,35 +158,54 @@ app.get("/views/cdc",(req,res)=>{
 //rendering material for cd students
 app.get("/views/cdms.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
-  const usersec=req.session.sec
-  console.log(usersec)
- let noMaterials=false;
+  const usersec = req.session.sec;
+  const userSub = req.query.subject; // Retrieve subject from query parameter
+  console.log("User Division:", usersec);
+  console.log("User Subject:", userSub);
+  let noMaterials = false;
+
   try {
-      await db.connect();
-      console.log("Connected to the database");
-      
-      // Retrieve materials
-      const materials = await db.query("SELECT d_id, d_name FROM materials WHERE div=$1",[usersec]);
-      console.log("Materials retrieved from the database:", materials.rows);
-      if(materials.rows===0){
-        noMaterials=true
-        res.render("cdms.ejs",{materials:[],noMaterials:noMaterials})
-        
-      }
-        else{
-          // Render the template with materials
-          res.render("cdms.ejs", { materials: materials.rows,noMaterials:noMaterials });
-          
+    await db.connect();
+    console.log("Connected to the database");
+
+    // Retrieve materials based on div and subject
+    const materials = await db.query(
+      "SELECT d_id, d_name, sec FROM materials WHERE div=$1 AND subject=$2",
+      [usersec, userSub]
+    );
+
+    console.log("Materials retrieved from the database:", materials.rows);
+
+    if (materials.rows.length === 0) {
+      noMaterials = true;
+      res.render("cdms.ejs", { sections: [], noMaterials: noMaterials });
+    } else {
+      // Organize materials into sections
+      const sections = {};
+      materials.rows.forEach((material) => {
+        const sectionName = material.sec || "Default"; // Use a default section name if not specified
+        if (!sections[sectionName]) {
+          sections[sectionName] = { name: sectionName, materials: [] };
         }
-      
+        sections[sectionName].materials.push(material);
+      });
+
+      // Convert sections object to an array for template rendering
+      const sectionsArray = Object.values(sections);
+
+      // Render the template with materials organized into sections
+      res.render("cdms.ejs", { sections: sectionsArray, noMaterials: noMaterials });
+    }
   } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send("Server error");
+    console.error("Error:", error);
+    res.status(500).send("Server error");
   } finally {
-      // Close the database connection
-      db.end();
+    // Close the database connection
+    db.end();
   }
 });
+
+
 
 
 
