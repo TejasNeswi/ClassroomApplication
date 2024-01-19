@@ -136,6 +136,11 @@
                 <input type="text" name="sec" id="sec" required>
 
                 <button type="submit">Upload</button>
+
+                
+            </form>
+            <form action="/logout.ejs" method="get">
+                <button type="submit">Logout</button>
             </form>
         </li>
     </ul>
@@ -154,9 +159,13 @@
                         <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
                     </div>
                 <% } %>
+                
             </div>
         <% } %>
+        
+    
     </div>
+    
 
     <script>
         function toggleForm() {

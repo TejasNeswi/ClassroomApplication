@@ -101,7 +101,7 @@ app.post("/login", async (req, res) => {
           res.render("homepg.ejs");
         }else{
         
-        res.render("cd.ejs",{pageTitle:req.session.sec,mode:req.session.mode,classList:classes.rows})
+        res.render("cd.ejs",{pageTitle:username,mode:req.session.mode,classList:classes.rows})
         } 
       } else {
           res.send("Username or password doesn't match");
@@ -223,9 +223,9 @@ app.get("/views/cda.ejs",(req,res)=>{
 
 app.get("/views/cdm.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
-  const usersec = req.session.sec;
+  const usersec = req.query.div
   const sub=req.session.sub;
-
+  console.log(usersec)
   try {
       await db.connect();
       console.log("Connected to the database");

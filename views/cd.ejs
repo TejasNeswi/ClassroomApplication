@@ -47,7 +47,7 @@
 <!-- cd.ejs -->
 <!-- Assuming 'classList' contains objects with 'className' and 'subject' properties -->
 <body>
-    <h1><%= pageTitle %></h1>
+    <h1>Welcome, <%= pageTitle %></h1>
 
     <ul>
         <li>
@@ -55,8 +55,8 @@
         <% if (mode === 'teacher') { %>
             <% for (let i = 0; i < classList.length; i++) { %>
                 <li>
-                    <form action="/views/class" method="get">
-                        <input type="hidden" name="className" value="<%= classList[i].className %>">
+                    <form action="/views/cdm.ejs" method="get">
+                        <input type="hidden" name="div" value="<%= classList[i].div %>">
                         <button type="submit" style="border: none; background: none; cursor: pointer;">
                             <i class="fas fa-folder folder-icon"></i>
                             <%= classList[i].div %>

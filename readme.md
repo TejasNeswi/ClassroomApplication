@@ -69,7 +69,7 @@ delete from userlogin
 insert into userlogin 
 (uname,upassword,umode)values('adminaccountname','password','admin',') ->substituting the name of your choice to adminaccountname and the copied hash password with password 
 )
-
+a
 
 6:Create a table named materials with the following code in query tool 
 create table materials (
