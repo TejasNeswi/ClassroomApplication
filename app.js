@@ -80,6 +80,7 @@ app.post("/login", async (req, res) => {
   const salt = await bcrypt.genSalt(5);
   const hash = await bcrypt.hash(password, salt);
   const db = new pg.Client(dbConfig);
+  console.log(password);
  
   try {
       await db.connect();

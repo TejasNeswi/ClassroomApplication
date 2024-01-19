@@ -54,6 +54,22 @@ create table userlogin(
 5:Create the first admin using the following code in query tool 
 insert into userlogin 
 (uname,upassword,umode)values('adminaccountname','password','admin',')
+(to find out the password follow the steps:
+1:Enter an easy password in this step -> insert into userlogin 
+(uname,upassword,umode)values('adminaccountname','password','admin',')
+
+2:Then start the server and enter the login details 
+
+3:Come back to VS code or check the console there itself to find the hashed password , copy the password 
+
+4:Then execute the following command in the query tool :
+delete from userlogin
+
+5:Enter the following code into the query tool
+insert into userlogin 
+(uname,upassword,umode)values('adminaccountname','password','admin',') ->substituting the name of your choice to adminaccountname and the copied hash password with password 
+)
+
 
 6:Create a table named materials with the following code in query tool 
 create table materials (
