@@ -47,8 +47,8 @@ create table userlogin(
     umode varchar,
     div varchar,
     subject varchar
-    constraint (uname,div)
-    constraint (div,subject)
+    constraint sid unique (uname,div)  (add a comma here if an error occurs)
+    constraint tid unique (div,subject)
 );
 
 5:Create the first admin using the following code in query tool 
@@ -76,7 +76,7 @@ create table materials (
         d_id int unique,
         d_name varchar unique,
         doc bytea,
-        div varchar
+        div varchar,
         sec varchar
 );
 
