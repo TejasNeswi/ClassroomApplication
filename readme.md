@@ -21,7 +21,7 @@ npm install
 ```
 node app.js
 ```
-6. if the server needs to be constantly restarted ie alternative to nodemon
+6. if the server needs to be constantly restarted i.e., alternative to nodemon
 ```
 node --watch app.js 
 ```
@@ -40,7 +40,7 @@ const dbConfig = {
   user: "postgres",
   host: "localhost",
   database: "capitals", -change this to the database name set up by you
-  password: "[{(4better)}]", - change this to tha password set up by you
+  password: "[{(4better)}]", - change this to the password set up by you
   port: 5432,
 };
 
