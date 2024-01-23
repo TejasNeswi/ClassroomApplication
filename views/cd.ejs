@@ -43,29 +43,72 @@
     </style>
 </head>
 
+<!-- Assuming you are using a template engine like EJS -->
+<!-- cd.ejs -->
+<!-- Assuming 'classList' contains objects with 'className' and 'subject' properties -->
 <body>
-    <h1>CSE-CD</h1>
+    <h1>Welcome, <%= pageTitle %></h1>
 
     <ul>
         <li>
-            <a href="/views/cdc">
-                <i class="fas fa-folder folder-icon"></i>
-                Materials
-            </a>
-        </li>
-        <li>
-            <a href="views\class2.ejs">
-                <i class="fas fa-folder folder-icon"></i>
-                CIE
-            </a>
-        </li>
-        <li>
-            <a href="/views/cda.ejs">
-                <i class="fas fa-folder folder-icon"></i>
-                Attendance
-            </a>
-        </li>
+            
+        <% if (mode === 'teacher') { %>
+            <% for (let i = 0; i < classList.length; i++) { %>
+                <li>
+                    <form action="/views/cdm.ejs" method="get">
+                        <input type="hidden" name="div" value="<%= classList[i].div %>">
+                        <button type="submit" style="border: none; background: none; cursor: pointer;">
+                            <i class="fas fa-folder folder-icon"></i>
+                            <%= classList[i].div %>
+                        </button>
+                    </form>
+                </li>
+            <% } %>
+            <li>
+                <a href="/views/cda.ejs">
+                    <i class="fas fa-folder folder-icon"></i>
+                    Attendance
+                </a>
+            </li>
+        <% } else if (mode === 'student') { %>
+            <li>
+                <a href="/views/cdms.ejs?subject=os">
+                    <i class="fas fa-folder folder-icon"></i>
+                    Operating Systems
+                </a>
+            </li>
+            <li>
+                <a href="/views/cdms.ejs?subject=math">
+                    <i class="fas fa-folder folder-icon"></i>
+                    Maths
+                </a>
+            </li>
+            <li>
+                <a href="/views/cdms.ejs?subject=dsa">
+                    <i class="fas fa-folder folder-icon"></i>
+                    DSA
+                </a>
+            </li>
+            <li>
+                <a href="/views/cdms.ejs?subject=adldco">
+                    <i class="fas fa-folder folder-icon"></i>
+                    ADLDCO
+                </a>
+            </li>
+        <% } %>
+
+        <form action="/logout.ejs" method="get">
+            <button type="submit">Logout</button>
+        </form>
+
+        <form action="/views/reset.ejs" method="get">
+            <button type="submit">Reset password</button>
+        </form>
     </ul>
 </body>
+
+
+
+
 
 </html>

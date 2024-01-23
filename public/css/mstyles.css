@@ -1,0 +1,47 @@
+/* Reset some default browser styles */
+body, h1, p {
+  margin: 0;
+  padding: 0;
+}
+
+/* Apply a background color to the body */
+body {
+  background-color: #f8f9fa;
+}
+
+/* Center the jumbotron content */
+.jumbotron.centered {
+  text-align: center;
+}
+
+/* Style the icon */
+.fa-key {
+  color: #007bff; /* Bootstrap primary color */
+}
+
+/* Style the heading */
+.display-3 {
+  color: #343a40; /* Bootstrap dark color */
+}
+
+/* Style the lead paragraph */
+.lead {
+  color: #6c757d; /* Bootstrap secondary color */
+}
+
+/* Style the button */
+.btn-dark {
+  background-color: #343a40; /* Bootstrap dark color */
+  color: #ffffff; /* White text on dark background */
+}
+
+/* Add some spacing between sections */
+.jumbotron {
+  margin-top: 20px;
+}
+
+/* Add a border between sections */
+.jumbotron hr {
+  border-color: #007bff; /* Bootstrap primary color */
+}
+
