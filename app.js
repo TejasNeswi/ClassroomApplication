@@ -81,10 +81,6 @@ app.post("/login", async (req, res) => {
   const hash = await bcrypt.hash(password, salt);
   const db = new pg.Client(dbConfig);
   console.log(hash);
-<<<<<<< HEAD
-  
-=======
->>>>>>> 8fa1798413109d536e6c46d45d84015303f63640
  
   try {
       await db.connect();
@@ -93,7 +89,7 @@ app.post("/login", async (req, res) => {
       const mode = result.rows[0].umode;
       const sec = result.rows[0].div;
       const sub=result.rows[0].subject;
-      console.log(storedHash)
+      console.log(sec)
       req.session.sec=sec;
       req.session.mode=mode;
       req.session.sub=sub;

@@ -179,92 +179,92 @@
 <!-- Assuming materials is an array of objects with properties d_id, d_name, and sec -->
 
 <body>
-    <h1>Material Upload</h1>
+        <h1>Material Upload</h1>
 
-    <ul>
-        <li class="active">
-            <a id="uploadLink" onclick="toggleForm()">
-                <i class="fas fa-folder folder-icon"></i>
-                Upload Materials
-            </a>
-            <form action="/upload_material" class="upload" method="post" enctype="multipart/form-data">
-                <label for="materialUpload">Select File:</label>
-                <input type="file" class="file" materialUpload" id="materialUpload" accept=".pdf" required>
+        <ul>
+            <li class="active">
+                <a id="uploadLink" onclick="toggleForm()">
+                    <i class="fas fa-folder folder-icon"></i>
+                    Upload Materials
+                </a>
+                <form action="/upload_material" class="upload" method="post" enctype="multipart/form-data">
+                    <label for="materialUpload">Select File:</label>
+                    <input type="file" class="file" materialUpload" name="materialUpload" id="materialUpload" accept=".pdf" required>
 
-                <label for="fileName">File Name:</label>
-                <input type="text" class="abc" name="fileName" id="fileName" required>
+                    <label for="fileName">File Name:</label>
+                    <input type="text" class="abc" name="fileName" id="fileName" required>
 
-                <label for="sec">Section/Chapter:</label>
-                <input type="text" class="sec" name="sec" id="sec" required>
+                    <label for="sec">Section/Chapter:</label>
+                    <input type="text" class="sec" name="sec" id="sec" required>
 
-                <button class="abcd" type="submit">Upload</button>
-
-
-            </form>
-            <form action="/logout.ejs" method="get">
-                <button class="ef" type="submit">Logout</button>
-            </form>
-        </li>
-    </ul>
-
-    <div class="materials-list">
-        <h2>Materials List</h2>
-        <% for (let sectionIndex in sections) { %>
-            <% const section=sections[sectionIndex]; %>
-                <div class="uploader-section">
-                    <hr>
-                    <h3>
-                        <%= section.name %>
-                    </h3>
-                    <% for (let material of section.materials) { %>
-                        <div class="material-item">
-                            <i class="fas fa-desktop screen-icon"></i>
-                            <h4>
-                                <%= material.d_name %>
-                            </h4>
-                            <button class="delete-button"
-                                onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
-                        </div>
-                        <% } %>
-
-                </div>
-                <% } %>
+                    <button class="abcd" type="submit">Upload</button>
 
 
-    </div>
+                </form>
+                <form action="/logout.ejs" method="get">
+                    <button class="ef" type="submit">Logout</button>
+                </form>
+            </li>
+        </ul>
+
+        <div class="materials-list">
+            <h2>Materials List</h2>
+            <% for (let sectionIndex in sections) { %>
+                <% const section=sections[sectionIndex]; %>
+                    <div class="uploader-section">
+                        <hr>
+                        <h3>
+                            <%= section.name %>
+                        </h3>
+                        <% for (let material of section.materials) { %>
+                            <div class="material-item">
+                                <i class="fas fa-desktop screen-icon"></i>
+                                <h4>
+                                    <%= material.d_name %>
+                                </h4>
+                                <button class="delete-button"
+                                    onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
+                            </div>
+                            <% } %>
+
+                    </div>
+                    <% } %>
 
 
-    <script>
-        function toggleForm() {
-            const uploadLink = document.getElementById('uploadLink');
-            const li = uploadLink.parentElement;
-            li.classList.toggle('active');
-        }
+        </div>
 
-        function deleteMaterial(materialId) {
-            if (confirm("Are you sure you want to delete this material?")) {
-                fetch(`/delete_material/${materialId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Material deleted:', data);
-                        document.location.reload();
-                    })
-                    .catch(error => {
-                        console.error('Error deleting material:', error);
-                    });
+
+        <script>
+            function toggleForm() {
+                const uploadLink = document.getElementById('uploadLink');
+                const li = uploadLink.parentElement;
+                li.classList.toggle('active');
             }
-        }
-    </script>
+
+            function deleteMaterial(materialId) {
+                if (confirm("Are you sure you want to delete this material?")) {
+                    fetch(`/delete_material/${materialId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Material deleted:', data);
+                            document.location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error deleting material:', error);
+                        });
+                }
+            }
+        </script>
 </body>
 
 
