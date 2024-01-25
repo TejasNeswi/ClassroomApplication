@@ -1,3 +1,12 @@
+//24 setup 41 view engine and session 57 get to home 64 get to login 70 get to userreg 
+//83 post to login 134 get to logout 144 get to cd 168 get to cdms 222 get to cda
+//233 get to cdm 279 delete 307 post to register 386 get to reset
+//451 post to upload 488 get material id
+
+
+
+
+
 import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
@@ -20,7 +29,7 @@ const dbConfig = {
   user: "postgres",
   host: "localhost",
   database: "capitals",
-  password: "tejasneswi@1610",
+  password: "[{(4better)}]",
   port: 5432,
 };
 
@@ -89,10 +98,11 @@ app.post("/login", async (req, res) => {
       const mode = result.rows[0].umode;
       const sec = result.rows[0].div;
       const sub=result.rows[0].subject;
-      console.log(sec)
-      req.session.sec=sec;
       req.session.mode=mode;
       req.session.sub=sub;
+      if(mode==="student"){
+        req.session.sec=sec;
+      }
       //passing the classes the teacher handles
       const classes =await db.query("Select div from userlogin WHERE uname=$1",[username]);
       
@@ -161,8 +171,8 @@ app.get("/views/cdms.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
   const usersec = req.session.sec;
   const userSub = req.query.subject; // Retrieve subject from query parameter
-  console.log("User Division:", usersec);
-  console.log("User Subject:", userSub);
+   console.log("User Division:", usersec);
+   console.log("User Subject:", userSub);
   let noMaterials = false;
 
   try {
@@ -225,7 +235,9 @@ app.get("/views/cdm.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
   const usersec = req.query.div
   const sub=req.session.sub;
-  console.log(usersec)
+  req.session.sec=usersec;
+  
+
   try {
       await db.connect();
       console.log("Connected to the database");
@@ -234,6 +246,7 @@ app.get("/views/cdm.ejs", async (req, res) => {
       
       const materialsResult = await db.query("SELECT d_id, d_name, sec FROM materials WHERE (div,subject)=($1,$2)", [usersec,sub]);
       const materials = materialsResult.rows;
+      console.log("Materials retrieved:",materials.rows);
 
       // Group materials by section
       const sectionsMap = new Map();
@@ -435,11 +448,10 @@ app.post('/reset-password', async (req, res) => {
 
 
 
-
-    app.post('/upload_material', upload.single('materialUpload'), async (req, res) => {
+  app.post('/upload_material', upload.single('materialUpload'), async (req, res) => {
         const usermode=req.session.mode
-        const usersec=req.session.sec
-        const sub=req.session.sub
+        const usersec=req.session.sec;
+        const sub=req.session.sub;
         if(usermode!=='teacher'){
           res.send("Unauthorized action")
         }
@@ -450,9 +462,7 @@ app.post('/reset-password', async (req, res) => {
        try{
         await db.connect();
         // Use the pool to insert the file into the database
-        console.log(fileName)
-        console.log(fileSec)
-        console.log(usersec)
+
         const result = await db.query('INSERT INTO materials (d_name,doc,div,subject,sec)  VALUES ($1, $2,$3,$4,$5) RETURNING d_id', [fileName, fileData,usersec,sub,fileSec]);
         res.redirect("/views/cdm.ejs")
       } catch (error) {
