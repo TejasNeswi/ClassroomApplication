@@ -464,7 +464,8 @@ app.post('/reset-password', async (req, res) => {
         // Use the pool to insert the file into the database
 
         const result = await db.query('INSERT INTO materials (d_name,doc,div,subject,sec)  VALUES ($1, $2,$3,$4,$5) RETURNING d_id', [fileName, fileData,usersec,sub,fileSec]);
-        res.redirect("/views/cdm.ejs")
+        res.redirect(`/views/cdm.ejs?div=${encodeURIComponent(usersec)}`);
+
       } catch (error) {
         console.error('Error uploading file:', error);
         res.status(500).json({ error: 'Internal Server Error' });
