@@ -1,131 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Password Reset</title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
         }
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: #000;
+        .pass {
+            text-align: center;
+            margin-top: 20px;
         }
 
         .password-container {
-            position: relative;
-            width: 400px;
-            height: 600px;
-            background: #000;
-            box-shadow: 0 0 50px #0ef;
-            border-radius: 20px;
-            padding: 40px;
-        }
-
-        @keyframes animate {
-            100% {
-                filter: hue-rotate(360deg);
-            }
-        }
-
-        .form-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            height: 100%;
-            transition: 1s ease-in-out;
+            height: 100vh;
         }
 
-        .password-container.active .form-container {
-            transform: translateY(-450px);
-        }
-
-        h1 {
+        .form-container {
+            background-color: #fff;
             padding: 30px;
-            font-size: 30px;
-            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h1 {
             text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            width: 346px;
         }
 
         .form-group {
-            position: relative;
-            margin: 30px 0;
-            border-bottom: 2px solid #fff;
+            margin-bottom: 20px;
         }
 
         .form-group label {
-            position: absolute;
-            top: 50%;
-            left: 5px;
-            transform: translateY(-50%);
-            font-size: large;
-            color: #fff;
-            pointer-events: none;
-            transition: .5s;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
         }
 
         .form-group input {
-            width: 320px;
-            height: 50px;
-            font-size: 16px;
-            color: #fff;
-            padding: 0 5px;
-            background: transparent;
-            border: none;
-            outline: none;
-        }
-
-        .form-group input:focus~label,
-        .form-group input:valid~label {
-            top: -5px;
-
-        }
-
-
-        button {
-            position: relative;
             width: 100%;
-            height: 40px;
-            background: #0ef;
-            box-shadow: 0 0 10px #0ef;
-            font-size: 20px;
-            color: #000;
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: 30px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .input-container {
+            text-align: center;
+        }
+
+        .input-container button {
+            padding: 10px 20px;
+            background-color: #2a0174;
             border: none;
-            outline: none;
-            margin-top: 40px;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            color: green;
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
-<<<<<<< HEAD
-
 <body>
-
     <div class="pass">
         <% if (errorMessage) { %>
-            <p style="color: red;">
+            <p class="error-message">
                 <%= errorMessage %>
             </p>
-            <% } %>
+        <% } %>
 
-                <% if (successMessage) { %>
-                    <p style="color: green;">
-                        <%= successMessage %>
-                    </p>
-                    <% } %>
+        <% if (successMessage) { %>
+            <p class="success-message">
+                <%= successMessage %>
+            </p>
+        <% } %>
     </div>
     <div class="password-container">
         <div class="form-container">
@@ -133,21 +109,21 @@
                 <h1>Password Reset</h1>
                 <!-- Assuming you have a way to pass the username to the form -->
                 <div class="form-group">
-                    <input type="text" id="username" name="username" required>
-                    <label class="abc" for="username">Username:</label>
+                    <label for="username">Username:</label>
+                    <input type="text" style="width: 330px;" id="username" name="username" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" name="oldPassword" id="oldPassword" required>
                     <label for="oldPassword">Old password</label>
+                    <input type="password" style="width: 330px;" name="oldPassword" id="oldPassword" required>
                 </div>
 
                 <div class="form-group">
-                    <input type="password" id="newPassword" name="newPassword" required>
                     <label for="newPassword">New Password:</label>
+                    <input type="password" style="width: 330px;" id="newPassword" name="newPassword" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
                     <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" style="width: 330px;" id="confirmPassword" name="confirmPassword" required>
                 </div>
                 <div class="input-container">
                     <button type="submit">Reset Password</button>
@@ -155,58 +131,5 @@
             </form>
         </div>
     </div>
-=======
-<style>
-    body{
-        background-color: black;
-        color: white;
-    }
-    .button{
-        background-color: rgb(83, 195, 240);
-        border-radius: 10px;
-        width: 150px;
-        height: 40px;
-        margin-left: 80px;
-    }
-    .container{
-        margin-left: 400px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        height: 400px;
-        width: 400px;
-        border-radius: 20px;
-        box-shadow: 0px 0px 10px 6px rgb(84, 192, 235); 
-    }
-    .container-items{
-        margin-bottom: 20px;
-        height: 40px;
-        width: 100%;
-    }
-</style>
-<body>
-    <h1 style="margin-left :490px;">Password Reset</h1>
-
-    
-<div class="container">
-    <form method="POST" action="/reset-password">
-        <!-- Assuming you have a way to pass the username to the form -->
-        <div class="container-items"><label for="username">Username:</label>
-            <input type="text" id="username" name="username" required></div>
-
-        <div class="container-items"><label for="oldPassword">Old password</label>
-            <input type="password" name="oldPassword" id="oldPassword" required></div>
-        <div class="container-items"><label for="newPassword">New Password:</label>
-            <input type="password" id="newPassword" name="newPassword" required></div>
-
-        <div class="container-items"><label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required></div>
-
-        <button type="submit" class="button">Reset Password</button>
-    </form>
-</div>
->>>>>>> 8fa1798413109d536e6c46d45d84015303f63640
 </body>
-
 </html>

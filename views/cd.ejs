@@ -5,160 +5,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classes</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            font-family: "Poppins", sans-serif;
-            background-color: #000;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            background-color: #f8f9fa;
         }
 
         h1 {
             text-align: center;
-            margin: 90px;
-            padding: 40px;
-            color: #fff;
+            margin-top: 50px;
+            color: #343a40;
+            font-size: 50px;
         }
 
         ul {
-            list-style: none;
+            list-style-type: none;
             padding: 0;
-            text-align: center;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
         }
 
         li {
-            display: inline-block;
             margin: 10px;
-            cursor: pointer;
-            font-size: 20px;
         }
 
-        .logout {
-            margin-top: 140px;
-            background-color: #0ef;
-            color: #000;
-            padding: 10px 20px;
-            border: none;
-            width: 170px;
-            height: 50px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 20px;
-            transition: background-color 0.3s ease;
-        }
-
-        .reset {
-            margin-top: 15px;
-            background-color: #0ef;
-            color: #000;
-            padding: 10px 20px;
-            border: none;
-            width: 200px;
-            height: 50px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 20px;
-            transition: background-color 0.3s ease;
-        }
-
-        .ab {
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 20px;
-            color: #fff;
-        }
-
-        a {
-            text-decoration: none;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .folder-container,
+        .file-container {
             text-align: center;
         }
 
-        .folder-icon {
-            font-size: 70px;
-            margin-bottom: 5px;
-            margin-left: 65px;
-            margin-right: 65px;
+        .folder-container form,
+        .file-container a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .folder-container button,
+        .file-container button {
+            background-color: #007bff;
+            border: none;
             color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+
+
+        .folder-container button:hover,
+        .file-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .folder-icon,
+        .file-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logout,
+        .reset {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+        }
+
+        .logout {
+            background-color: #dc3545;
+            color: #fff;
+            margin-bottom: 20px;
+            margin-left: 724px;
+            margin-top: 200px;
+        }
+
+        .logout:hover {
+            background-color: #c82333;
+        }
+
+        .reset {
+            background-color: #2a0174;
+            color: #fff;
+            margin-left: 690px;
+        }
+        .wx {
+            width: 141px;
+        }
+
+        .wx,
+        .xy {
+            margin-left: 45px;
+            font-size: 20px;
+            height: 135px;
+            font-size: 22px;
+        }
+
+        .reset:hover {
+            background-color: #218838;
         }
     </style>
 </head>
-
-<!-- Assuming you are using a template engine like EJS -->
-<!-- cd.ejs -->
-<!-- Assuming 'classList' contains objects with 'className' and 'subject' properties -->
 
 <body>
     <h1>Welcome <%= pageTitle %>
     </h1>
 
     <ul>
-        <li>
-
-            <% if (mode==='teacher' ) { %>
-                <% for (let i=0; i < classList.length; i++) { %>
-        <li>
-            <form action="/views/cdm.ejs" method="get">
-                <input type="hidden" name="div" value="<%= classList[i].div %>">
-                <button type="submit" class="ab" style="border: none; background: none; cursor: pointer;">
-                    <i class="fas fa-folder folder-icon"></i>
-                    <br>
-                    <%= classList[i].div %>
-                </button>
-            </form>
-        </li>
-        <% } %>
-            <li>
-                <a href="/views/cda.ejs">
-                    <i class="fas fa-folder folder-icon"></i>
-                    Attendance
-                </a>
-            </li>
-            <% } else if (mode==='student' ) { %>
+        <% if (mode==='teacher' ) { %>
+            <% for (let i=0; i < classList.length; i++) { %>
                 <li>
-                    <a href="/views/cdms.ejs?subject=os">
-                        <i class="fas fa-folder folder-icon"></i>
-                        Operating Systems
-                    </a>
-                </li>
-                <li>
-                    <a href="/views/cdms.ejs?subject=math">
-                        <i class="fas fa-folder folder-icon"></i>
-                        Mathematics
-                    </a>
-                </li>
-                <li>
-                    <a href="/views/cdms.ejs?subject=dsa">
-                        <i class="fas fa-folder folder-icon"></i>
-                        Data Structures
-                    </a>
-                </li>
-                <li>
-                    <a href="/views/cdms.ejs?subject=adldco">
-                        <i class="fas fa-folder folder-icon"></i>
-                        Applied Logic Design
-                    </a>
+                    <div class="folder-container">
+                        <form action="/views/cdm.ejs" method="get">
+                            <input type="hidden" name="div" value="<%= classList[i].div %>">
+                            <button class="wx" type="submit">
+                                <i class="fas fa-folder folder-icon"></i><br>
+                                <%= classList[i].div %>
+                            </button>
+                        </form>
+                    </div>
                 </li>
                 <% } %>
-
-                    <form action="/logout.ejs" method="get">
-                        <button type="submit" class="logout">Logout</button>
-                    </form>
-
-                    <form action="/views/reset.ejs" method="get">
-                        <button type="submit" class="reset">Reset password</button>
-                    </form>
+                    <li>
+                        <div class="file-container">
+                            <a href="/views/cda.ejs">
+                                <button class="xy">
+                                    <i class="fas fa-folder folder-icon"></i><br>
+                                    Attendance
+                                </button>
+                            </a>
+                        </div>
+                    </li>
+                    <% } else if (mode==='student' ) { %>
+                        <li>
+                            <div class="file-container">
+                                <a href="/views/cdms.ejs?subject=os">
+                                    <button class="xy">
+                                        <i class="fas fa-folder folder-icon"></i><br>
+                                        Operating Systems
+                                    </button>
+                                </a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="file-container">
+                                <a href="/views/cdms.ejs?subject=math">
+                                    <button class="xy">
+                                        <i class="fas fa-folder folder-icon"></i><br>
+                                        Mathematics
+                                    </button>
+                                </a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="file-container">
+                                <a href="/views/cdms.ejs?subject=dsa">
+                                    <button class="xy">
+                                        <i class="fas fa-folder folder-icon"></i><br>
+                                        Data Structures
+                                    </button>
+                                </a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="file-container">
+                                <a href="/views/cdms.ejs?subject=adldco">
+                                    <button class="xy">
+                                        <i class="fas fa-folder folder-icon"></i><br>
+                                        Applied Logic Design
+                                    </button>
+                                </a>
+                            </div>
+                        </li>
+                        <% } %>
     </ul>
+
+    <form action="/logout.ejs" method="get">
+        <button type="submit" class="logout">Logout</button>
+    </form>
+
+    <form action="/views/reset.ejs" method="get">
+        <button type="submit" class="reset">Reset password</button>
+    </form>
 </body>
-
-
-
-
 
 </html>

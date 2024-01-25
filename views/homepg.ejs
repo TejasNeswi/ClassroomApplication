@@ -5,87 +5,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classes</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #000;
-            /* Red, White, and Blue */
-            color: #ffffff;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            background-color: #f8f9fa;
         }
 
         h1 {
-            color: #ffffff;
-            margin: 40px;
-            padding: 45px;
+            text-align: center;
+            margin-top: 50px;
+            color: #343a40;
+            margin-bottom: 64px;
         }
 
         ul {
-            list-style: none;
+            list-style-type: none;
             padding: 0;
-            text-align: center;
             margin: 0;
+            text-align: center;
         }
 
         li {
             display: inline-block;
-            margin: 15px;
+            margin-bottom: 20px;
+            margin-right: 20px;
+            /* Adjust as needed */
+        }
+
+        .folder-btn {
+            text-decoration: none;
+            color: #343a40;
+            font-size: 18px;
+            display: inline-block;
+            transition: color 0.3s;
+            background-color: transparent;
+            border: none;
             cursor: pointer;
         }
 
-        a {
-            text-decoration: none;
-            color: #ffffff;
-            display: flex;
-            font-size: 30px;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+        .folder-btn:hover {
+            color: #28a745;
         }
 
         .folder-icon {
-            font-size: 90px;
-            margin-bottom: 10px;
-            margin-left: 75px;
-            margin-right: 75px
-        }
-
-        form {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        button {
-            background-color: #0ef;
-            /* Red */
-            color: #000;
-            padding: 10px 20px;
-            border: none;
-            width: 170px;
-            height: 50px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 20px;
-            margin-top: 10px;
-            transition: background-color 0.3s ease;
+            margin-right: 10px;
         }
 
         .logout {
-            width: 100px;
-            
+            background-color: #dc3545;
+            color: #fff;
         }
 
-        button:hover {
-            background-color: #0ef;
-            /* Darker red on hover */
+        .xy {
+            margin-left: 45px;
+            background-color: #007bff;
+            color: #fff;
+
+            width: 124px;
+            height: 114px;
+            font-size: 22px;
+        }
+
+        .register {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .register,
+        .logout {
+            
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .register:hover,
+        .logout:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -95,22 +98,28 @@
 
     <ul>
         <li>
-            <a href="/views/cy.ejs">
-                <i class="fas fa-folder folder-icon"></i>
-                CY
-            </a>
+            <form action="/views/cy.ejs" method="get">
+                <button class="xy" type="submit" class="folder-btn">
+                    <i class="fas fa-folder folder-icon"></i>
+                    CY
+                </button>
+            </form>
         </li>
         <li>
-            <a href="/views/cd.ejs">
-                <i class="fas fa-folder folder-icon"></i>
-                CD
-            </a>
+            <form action="/views/cd.ejs" method="get">
+                <button class="xy" type="submit" class="folder-btn">
+                    <i class="fas fa-folder folder-icon"></i>
+                    CD
+                </button>
+            </form>
         </li>
         <li>
-            <a href="/views/cse.ejs">
-                <i class="fas fa-folder folder-icon"></i>
-                CSE
-            </a>
+            <form action="/views/cse.ejs" method="get">
+                <button class="xy" type="submit" class="folder-btn">
+                    <i class="fas fa-folder folder-icon"></i>
+                    CSE
+                </button>
+            </form>
         </li>
     </ul>
 
