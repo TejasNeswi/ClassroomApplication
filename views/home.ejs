@@ -1,84 +1,77 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>RVCE Theme</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RVCE Classroom</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      background-color: #ecf0f1; /* Set a light background color */
-    }
-
-    html, body {
-      height: 100%;
-    }
-
-    .jumbotron {
-      background: linear-gradient(135deg, #ff0000 33%, #ffffff 33%, #ffffff 66%, #0000ff 66%);
-      color: #ffffff;
-      text-align: center;
-      padding: 4rem;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      height: 100%; /* Make the jumbotron full height */
     }
 
-    .jumbotron i {
-      color: #ffffff;
+    h1 {
+      font-size: 40px;
+      margin: 70px;
+    padding: 20px;
     }
 
-    .jumbotron h1 {
-      color: #ffffff;
-      margin-top: 1rem;
+    p {
+      font-size: 30px;
     }
 
-    .jumbotron p {
-      color: #ffffff;
-      font-size: 1.5rem;
-      margin-bottom: 2rem;
+    .click {
+      margin: 100px;
+      padding: 80px;
     }
+    
 
-    .jumbotron hr {
-      border-color: #ffffff;
-      margin: 2rem 0;
-      width: 50%; /* Adjust the width of the hr */
-    }
-
-    .jumbotron .btn {
-      background: linear-gradient(45deg, #ff0000, #ffffff, #0000ff); /* Updated gradient for the button */
-      border-color: #0000ff;
-      color: #ffffff;
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      border-radius: 25px;
+    /* a.btn.btn-success.btn-lg {
+      color: #fff;
+      font-size: 30px;
+    } */
+    a.btn.btn-success.btn-lg {
       text-decoration: none;
-      transition: background 0.3s ease;
+      display: inline-block;
+      width: 100px;
+      height: px;
+      padding: 10px 20px;
+      margin: 10px;
+      border: 0px solid #ffffff;
+      color: #000;
+      background-color: #0ef;
+      font-size: 25px;
+      cursor: pointer;
+      border-radius: 30px;
+      transition: background-color 0.3s, color 0.3s;
     }
-
-    .jumbotron .btn:hover {
-      background: linear-gradient(45deg, #0000ff, #ffffff, #ff0000); /* Updated gradient on hover */
+    a:hover {
+      background-color: #ffffff;
+      color: #0ef; /* Blue color on hover */
     }
   </style>
 </head>
 
 <body>
-  <div class="jumbotron">
-    <div class="container">
-      <i class="fas fa-key fa-6x"></i>
-      <h1 class="display-3">RVCE</h1>
-      <p class="lead">Tricolor Theme</p>
-      <hr>
-      <a class="btn btn-success btn-lg" href="/login" role="button">Login</a>
+  <h1>Welcome to Our Classroom!</h1>
+  
+
+  <p>To Sign In click below</p>
+  
+  <div class="button">
+    <div class="click">
+      <a class="btn btn-success btn-lg" type="button" href="/login" role="button">Sign In</a>
     </div>
+
   </div>
 </body>
 

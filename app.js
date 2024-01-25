@@ -20,7 +20,7 @@ const dbConfig = {
   user: "postgres",
   host: "localhost",
   database: "capitals",
-  password: "[{(4better)}]",
+  password: "tejasneswi@1610",
   port: 5432,
 };
 
@@ -80,7 +80,8 @@ app.post("/login", async (req, res) => {
   const salt = await bcrypt.genSalt(5);
   const hash = await bcrypt.hash(password, salt);
   const db = new pg.Client(dbConfig);
-  console.log(password);
+  console.log(hash);
+  
  
   try {
       await db.connect();
@@ -89,7 +90,7 @@ app.post("/login", async (req, res) => {
       const mode = result.rows[0].umode;
       const sec = result.rows[0].div;
       const sub=result.rows[0].subject;
-      console.log(sec)
+      console.log(storedHash)
       req.session.sec=sec;
       req.session.mode=mode;
       req.session.sub=sub;

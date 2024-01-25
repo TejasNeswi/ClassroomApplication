@@ -4,83 +4,129 @@
 <head>
   <meta charset="utf-8">
   <title>Login</title>
-
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
+    * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      background: linear-gradient(135deg, #3498db, #e74c3c, #27ae60);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
       display: flex;
-      align-items: center;
       justify-content: center;
-      height: 100vh;
+      align-items: center;
+      min-height: 100vh;
+      background: #000;
     }
 
     .login-container {
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+      width: 400px;
+      height: 500px;
+      background: #000;
+      box-shadow: 0 0 50px #0ef;
+      border-radius: 20px;
+      padding: 40px;
     }
 
-    .login-container h1 {
+    @keyframes animate {
+      100% {
+        filter: hue-rotate(360deg);
+      }
+    }
+
+    .form-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      transition: 1s ease-in-out;
+    }
+
+    .login-container.active .form-container {
+      transform: translateY(-450px);
+    }
+
+    h1 {
+      padding: 30px;
+      font-size: 30px;
+      color: #fff;
       text-align: center;
-      color: #333333;
     }
 
     .form-group {
-      margin-bottom: 15px;
+      position: relative;
+      margin: 30px 0;
+      border-bottom: 2px solid #fff;
     }
 
     .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      color: #333333;
+      position: absolute;
+      top: 50%;
+      left: 5px;
+      transform: translateY(-50%);
+      font-size: large;
+      color: #fff;
+      pointer-events: none;
+      transition: .5s;
     }
 
-    .form-control {
+    .form-group input {
+      width: 320px;
+      height: 50px;
+      font-size: 16px;
+      color: #fff;
+      padding: 0 5px;
+      background: transparent;
+      border: none;
+      outline: none;
+    }
+
+    .form-group input:focus~label,
+    .form-group input:valid~label {
+      top: -5px;
+
+    }
+
+
+    button {
+      position: relative;
       width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    .btn {
-      background-color: #3498db;
-      border-color: #27ae60;
-      color: #ffffff;
-      padding: 10px 15px;
-      font-size: 1rem;
-      border-radius: 5px;
-      text-decoration: none;
-      display: inline-block;
+      height: 40px;
+      background: #0ef;
+      box-shadow: 0 0 10px #0ef;
+      font-size: 20px;
+      color: #000;
+      font-weight: 500;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      border-radius: 30px;
+      border: none;
+      outline: none;
     }
-
-    .btn:hover {
-      background-color: #e74c3c;
-    }
+    
   </style>
 </head>
 
 <body>
   <div class="login-container">
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" class="form-control" name="username" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" name="password" required>
-      </div>
-      <button type="submit" class="btn btn-block">Login</button>
-    </form>
+    <div class="form-container">
+      <form action="/login" method="POST" class="form signin">
+        <h1>Login</h1>
+        <div class="form-group">
+          <input type="text" id="signin-username" class="form-control" name="username" required>
+          <label for="username">Username</label>
+        </div>
+        <div class="form-group">
+          <input type="password" id="signin-password" class="form-control" name="password" required>
+          <label for="password">Password</label>
+        </div>
+        <div class="input-container ">
+          <button type="submit" class="btn btn-block">Login</button>
+        </div>
+      </form>
+    </div>
   </div>
 </body>
 
