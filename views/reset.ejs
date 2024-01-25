@@ -7,31 +7,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Password Reset</title>
 </head>
+<style>
+    body{
+        background-color: black;
+        color: white;
+    }
+    .button{
+        background-color: rgb(83, 195, 240);
+        border-radius: 10px;
+        width: 150px;
+        height: 40px;
+        margin-left: 80px;
+    }
+    .container{
+        margin-left: 400px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        height: 400px;
+        width: 400px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 10px 6px rgb(84, 192, 235); 
+    }
+    .container-items{
+        margin-bottom: 20px;
+        height: 40px;
+        width: 100%;
+    }
+</style>
 <body>
-    <h1>Password Reset</h1>
+    <h1 style="margin-left :490px;">Password Reset</h1>
 
-    <% if (errorMessage) { %>
-        <p style="color: red;"><%= errorMessage %></p>
-    <% } %>
-
-    <% if (successMessage) { %>
-        <p style="color: green;"><%= successMessage %></p>
-    <% } %>
-
+    
+<div class="container">
     <form method="POST" action="/reset-password">
         <!-- Assuming you have a way to pass the username to the form -->
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+        <div class="container-items"><label for="username">Username:</label>
+            <input type="text" id="username" name="username" required></div>
 
-        <label for="oldPassword">Old password</label>
-        <input type="password" name="oldPassword" id="oldPassword" required>
-        <label for="newPassword">New Password:</label>
-        <input type="password" id="newPassword" name="newPassword" required>
+        <div class="container-items"><label for="oldPassword">Old password</label>
+            <input type="password" name="oldPassword" id="oldPassword" required></div>
+        <div class="container-items"><label for="newPassword">New Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required></div>
 
-        <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <div class="container-items"><label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required></div>
 
-        <button type="submit">Reset Password</button>
+        <button type="submit" class="button">Reset Password</button>
     </form>
+</div>
 </body>
 </html>

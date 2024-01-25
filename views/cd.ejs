@@ -9,6 +9,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
         }
 
         h1 {
@@ -29,7 +31,7 @@
 
         a {
             text-decoration: none;
-            color: #333;
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -37,8 +39,22 @@
         }
 
         .folder-icon {
-            font-size: 24px;
+            font-size: 90px;
+            margin-right: 20px;
             margin-bottom: 5px;
+            color: white;
+        }
+        .button{
+            background-color: rgb(61, 178, 251);
+            color: white;
+            height: 50px;
+            width: 150px;
+        }
+        .button.first{
+            height: 50px;
+            width: 90px;
+            margin-top: 110px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -47,30 +63,24 @@
 <!-- cd.ejs -->
 <!-- Assuming 'classList' contains objects with 'className' and 'subject' properties -->
 <body>
-    <h1>Welcome, <%= pageTitle %></h1>
+    <h1>Welcome</h1>
 
     <ul>
         <li>
-            
-        <% if (mode === 'teacher') { %>
-            <% for (let i = 0; i < classList.length; i++) { %>
                 <li>
                     <form action="/views/cdm.ejs" method="get">
                         <input type="hidden" name="div" value="<%= classList[i].div %>">
                         <button type="submit" style="border: none; background: none; cursor: pointer;">
                             <i class="fas fa-folder folder-icon"></i>
-                            <%= classList[i].div %>
                         </button>
                     </form>
                 </li>
-            <% } %>
             <li>
                 <a href="/views/cda.ejs">
                     <i class="fas fa-folder folder-icon"></i>
                     Attendance
                 </a>
             </li>
-        <% } else if (mode === 'student') { %>
             <li>
                 <a href="/views/cdms.ejs?subject=os">
                     <i class="fas fa-folder folder-icon"></i>
@@ -95,14 +105,13 @@
                     ADLDCO
                 </a>
             </li>
-        <% } %>
 
         <form action="/logout.ejs" method="get">
-            <button type="submit">Logout</button>
+            <button type="submit" class="button first" >Logout</button>
         </form>
 
         <form action="/views/reset.ejs" method="get">
-            <button type="submit">Reset password</button>
+            <button type="submit" class="button second">Reset password</button>
         </form>
     </ul>
 </body>
