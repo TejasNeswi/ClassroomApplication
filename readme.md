@@ -18,12 +18,15 @@ npm install
 5: Run the server
 
 node app.js
+```
+6. if the server needs to be constantly restarted ie alternative to nodemon
+```
+node --watch app.js 
+```
 
-node --watch app.js (if the server needs to be constantly restarted ie alternative to nodemon)
-
-
-Setting up the database 
-1:Install postgress with default setup (remember the password used during setup)
+### Setting up the database 
+1. Install postgress with default setup (remember the password used during setup)
+```
 https://www.postgresql.org/download/
 
 2:Create a database using pgadmin (installed by default during installation of postgres)
@@ -33,8 +36,8 @@ https://www.postgresql.org/download/
 const dbConfig = {
   user: "postgres",
   host: "localhost",
-  database: "", -change this to the database name set up by you
-  password: "", - change this to tha password set up by you
+  database: "capitals", -change this to the database name set up by you
+  password: "[{(4better)}]", - change this to tha password set up by you
   port: 5432,
 };
 
@@ -47,8 +50,8 @@ create table userlogin(
     umode varchar,
     div varchar,
     subject varchar
-    constraint (uname,div)
-    constraint (div,subject)
+    constraint sid unique (uname,div)  (add a comma here if an error occurs)
+    constraint tid unique (div,subject)
 );
 
 5:Create the first admin using the following code in query tool 
@@ -76,7 +79,7 @@ create table materials (
         d_id int unique,
         d_name varchar unique,
         doc bytea,
-        div varchar
+        div varchar,
         sec varchar
 );
 
