@@ -98,6 +98,7 @@ app.post("/login", async (req, res) => {
       const mode = result.rows[0].umode;
       const sec = result.rows[0].div;
       const sub=result.rows[0].subject;
+      req.session.username=username;
       req.session.mode=mode;
       req.session.sub=sub;
       if(mode==="student"){
@@ -144,15 +145,12 @@ app.get("/logout.ejs",(req,res)=>{
 
 //handles get requests to cd
 app.get("/views/cd.ejs",(req,res)=>{ 
-  const userSec = req.session.sec;
-  const userMode = req.session.mode;
-
-      if (userMode === 'admin' || (userMode !== 'admin' && userSec == "CD")) {
-          res.render("cd.ejs");
-      } else {
-          res.send("Unauthorized access");
-      }
-  
+  const div=req.query.div;
+ 
+  req.session.sec=div;
+  //const username=req.session.username;
+  console.log(div)
+  res.render("cd.ejs",{pageTitle:'admin',mode:req.session.mode,classList:[]})
 })
 
 //verification for usermode
