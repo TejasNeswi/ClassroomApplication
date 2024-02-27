@@ -349,7 +349,7 @@ app.post("/register", upload.single('excelFile'), async (req, res) => {
       const type = String(row.getCell(3).value).trim();
       const sec = String(row.getCell(4).value).trim();
       const sub = String(row.getCell(5).value).trim();
-      const email=String(row.getCell(6).value).trim()
+      
 
       const passwordString = String(password);
 
