@@ -57,6 +57,23 @@ app.use(
   )
 )
 
+////C:\Users\Asus\backend\Classroom\templates\Teacher template.xlsx
+app.get("/download-template",(req,res)=>{
+  const mode =req.query.param;
+  let filename,filepath;
+  if(mode=="student"){
+   filepath='C:\\Users\\Asus\\backend\\Classroom\\templates\\Student template.xlsx';
+  filename='Student template.xlsx';
+  }else{
+     filepath='\\Users\\Asus\\backend\\Classroom\\templates\\Teacher template.xlsx';
+     filename='Teacher template.xlsx';
+  }
+  res.setHeader('Content-disposition', `attachment; filename=${filename}`);
+  res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.download(filepath);
+
+})
+
 //get request to the homepage
 app.get("/",(req,res)=>{
     res.render("home.ejs");
@@ -215,7 +232,11 @@ app.get("/views/cdms.ejs", async (req, res) => {
 });
 
 
-
+app.get("/views/class.ejs",(req,res)=>{
+  const div=req.query.div;
+  req.session.sec=div;
+  res.render("class.ejs",{section:div})
+})
 
 
 //get request to attendance page
@@ -231,9 +252,9 @@ app.get("/views/cda.ejs",(req,res)=>{
 
 app.get("/views/cdm.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
-  const usersec = req.query.div
+  const usersec = req.session.sec;
   const sub=req.session.sub;
-  req.session.sec=usersec;
+  //req.session.sec=usersec;
   
 
   try {
@@ -328,6 +349,7 @@ app.post("/register", upload.single('excelFile'), async (req, res) => {
       const type = String(row.getCell(3).value).trim();
       const sec = String(row.getCell(4).value).trim();
       const sub = String(row.getCell(5).value).trim();
+      const email=String(row.getCell(6).value).trim()
 
       const passwordString = String(password);
 

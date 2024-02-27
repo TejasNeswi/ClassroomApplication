@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            color: #343a40;
+            font-size: 50px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        li {
+            margin: 10px;
+        }
+
+        .folder-container,
+        .file-container {
+            text-align: center;
+        }
+
+        .folder-container form,
+        .file-container a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .folder-container button,
+        .file-container button {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+
+
+        .folder-container button:hover,
+        .file-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .folder-icon,
+        .file-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logout,
+        .reset {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+        }
+
+        .logout {
+            background-color: #dc3545;
+            color: #fff;
+            margin-bottom: 20px;
+            margin-left: 724px;
+            margin-top: 200px;
+        }
+
+        .logout:hover {
+            background-color: #c82333;
+        }
+
+        .reset {
+            background-color: #2a0174;
+            color: #fff;
+            margin-left: 690px;
+        }
+        .wx {
+            width: 141px;
+        }
+
+        .wx,
+        .xy {
+            margin-left: 45px;
+            font-size: 20px;
+            height: 135px;
+            font-size: 22px;
+        }
+
+        .reset:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to <% section %></h1>
+    <div class="file-container">
+        <a href="/views/cdm.ejs">
+            <button class="xy">
+                <i class="fas fa-folder folder-icon"></i><br>
+                Materials
+            </button>
+        </a>
+    </div>
+    </li>
+    <div class="file-container">
+        <a href="/views/cda.ejs">
+            <button class="xy">
+                <i class="fas fa-folder folder-icon"></i><br>
+                Attendance
+            </button>
+        </a>
+    </div>
+    </li>
+    <div class="file-container">
+        <a href="/views/cda.ejs">
+            <button class="xy">
+                <i class="fas fa-folder folder-icon"></i><br>
+                CIE
+            </button>
+        </a>
+    </div>
+    </li>
+</body>
+</html>

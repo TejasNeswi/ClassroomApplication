@@ -61,14 +61,24 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background-color: #218838;
 }
+a:visited {
+        color: inherit; /* Use the same color as the link */
+        text-decoration: none; /* Remove underline */
+    }
 
+a[href]:visited {
+            color: #007bff; /* Change color to blue */
+        }
     </style>
 </head>
 
 <body>
+    <h1>Sign Up</h1>
+    <p>Download Excel Template:</p>
+    <a href="/download-template?param=teacher">Download Teacher Template</a>
+    <br>
+    <a href="/download-template?param=student">Download Student Template</a>
     <form action="/register" method="post" enctype="multipart/form-data">
-        <h1>Sign Up</h1>
-
         <label for="excelFile">Upload Excel File</label>
         <input type="file" id="excelFile" name="excelFile" accept=".xls, .xlsx" required>
 
