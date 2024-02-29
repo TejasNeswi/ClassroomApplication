@@ -194,41 +194,32 @@ app.get("/views/cdms.ejs", async (req, res) => {
     await db.connect();
     console.log("Connected to the database");
 
-    // Retrieve materials based on div and subject
-    const materials = await db.query(
-      "SELECT d_id, d_name, sec FROM materials WHERE div=$1 AND subject=$2",
-      [usersec, userSub]
-    );
+    // Retrieve materials
+    const materialsResult = await db.query("SELECT d_id, d_name, sec, announcement FROM materials WHERE (div, subject)=($1, $2)", [usersec, userSub]);
+    const materials = materialsResult.rows;
+    console.log("Materials retrieved:", materials);
 
-    console.log("Materials retrieved from the database:", materials.rows);
-
-    if (materials.rows.length === 0) {
-      noMaterials = true;
-      res.render("cdms.ejs", { sections: [], noMaterials: noMaterials });
-    } else {
-      // Organize materials into sections
-      const sections = {};
-      materials.rows.forEach((material) => {
-        const sectionName = material.sec || "Default"; // Use a default section name if not specified
-        if (!sections[sectionName]) {
-          sections[sectionName] = { name: sectionName, materials: [] };
+    // Group materials by announcement
+    const announcementsMap = new Map();
+    materials.forEach(material => {
+        const announcementKey = material.announcement;
+        if (!announcementsMap.has(announcementKey)) {
+            announcementsMap.set(announcementKey, []);
         }
-        sections[sectionName].materials.push(material);
-      });
+        announcementsMap.get(announcementKey).push(material);
+    });
 
-      // Convert sections object to an array for template rendering
-      const sectionsArray = Object.values(sections);
+    const announcements = Array.from(announcementsMap, ([announcement, materials]) => ({ announcement, materials }));
 
-      // Render the template with materials organized into sections
-      res.render("cdms.ejs", { sections: sectionsArray, noMaterials: noMaterials });
-    }
-  } catch (error) {
+    res.render("cdms.ejs", { announcements });
+} catch (error) {
     console.error("Error:", error);
     res.status(500).send("Server error");
-  } finally {
+} finally {
     // Close the database connection
     db.end();
-  }
+}
+
 });
 
 
@@ -253,33 +244,30 @@ app.get("/views/cda.ejs",(req,res)=>{
 app.get("/views/cdm.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
   const usersec = req.session.sec;
-  const sub=req.session.sub;
-  //req.session.sec=usersec;
-  
+  const sub = req.session.sub;
 
   try {
       await db.connect();
       console.log("Connected to the database");
 
-      // Retrieve materials
-      
-      const materialsResult = await db.query("SELECT d_id, d_name, sec FROM materials WHERE (div,subject)=($1,$2)", [usersec,sub]);
+      // Retrieve materials with announcements
+      const materialsResult = await db.query("SELECT d_id, d_name, sec, announcement FROM materials WHERE (div, subject)=($1, $2)", [usersec, sub]);
       const materials = materialsResult.rows;
-      console.log("Materials retrieved:",materials.rows);
+      console.log("Materials retrieved:", materials);
 
-      // Group materials by section
-      const sectionsMap = new Map();
+      // Group materials by announcement
+      const announcementsMap = new Map();
       materials.forEach(material => {
-          const sectionKey = material.sec;
-          if (!sectionsMap.has(sectionKey)) {
-              sectionsMap.set(sectionKey, []);
+          const announcementKey = material.announcement;
+          if (!announcementsMap.has(announcementKey)) {
+              announcementsMap.set(announcementKey, []);
           }
-          sectionsMap.get(sectionKey).push(material);
+          announcementsMap.get(announcementKey).push(material);
       });
 
-      const sections = Array.from(sectionsMap, ([name, materials]) => ({ name, materials }));
+      const announcements = Array.from(announcementsMap, ([announcement, materials]) => ({ announcement, materials }));
 
-      res.render("cdm.ejs", { sections });
+      res.render("cdm.ejs", { announcements });
   } catch (error) {
       console.error("Error:", error);
       res.status(500).send("Server error");
@@ -288,6 +276,8 @@ app.get("/views/cdm.ejs", async (req, res) => {
       db.end();
   }
 });
+
+
 
 
 
@@ -468,69 +458,86 @@ app.post('/reset-password', async (req, res) => {
 
 
 
-  app.post('/upload_material', upload.single('materialUpload'), async (req, res) => {
-        const usermode=req.session.mode
-        const usersec=req.session.sec;
-        const sub=req.session.sub;
-        if(usermode!=='teacher'){
-          res.send("Unauthorized action")
-        }
-        const fileName = req.body.fileName;
-        const fileData = req.file.buffer;
-        const fileSec=req.body.sec;
-        const db= new pg.Client(dbConfig)
-       try{
-        await db.connect();
-        // Use the pool to insert the file into the database
+app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, res) => {
+  const usermode = req.session.mode;
+  const usersec = req.session.sec;
+  const sub = req.session.sub;
 
-        const result = await db.query('INSERT INTO materials (d_name,doc,div,subject,sec)  VALUES ($1, $2,$3,$4,$5) RETURNING d_id', [fileName, fileData,usersec,sub,fileSec]);
-        res.redirect(`/views/cdm.ejs?div=${encodeURIComponent(usersec)}`);
+  if (usermode !== 'teacher') {
+      return res.send("Unauthorized action");
+  }
 
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      } finally {
-        db.end((endErr) => {
-          if (endErr) {
-            console.error("Connection couldn't terminate", endErr);
-          } else {
-            console.log("Connection terminated successfully");
+  const announcement = req.body.announcement;
+  const fileSec = req.body.sec;
+  console.log(announcement);
+  const db = new pg.Client(dbConfig);
+
+  try {
+      await db.connect();
+
+      if (announcement && req.files.length === 0) {
+          // No files uploaded, only an announcement
+          await db.query('INSERT INTO materials (div,subject,announcement) VALUES ($1,$2,$3)', [usersec,sub,announcement]);
+      } else if (req.files.length > 0) {
+          for (const file of req.files) {
+              const fileName = file.originalname;
+              const fileData = file.buffer;
+
+              await db.query('INSERT INTO materials (d_name, doc, div, subject, sec,announcement) VALUES ($1, $2, $3, $4, $5,$6)', [fileName, fileData, usersec, sub, fileSec,announcement]);
           }
-        });
       }
 
-      
-    });
+      res.redirect(`/views/cdm.ejs?div=${encodeURIComponent(usersec)}`);
+  } catch (error) {
+      console.error('Error uploading file:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+      db.end((endErr) => {
+          if (endErr) {
+              console.error("Connection couldn't terminate", endErr);
+          } else {
+              console.log("Connection terminated successfully");
+          }
+      });
+  }
+});
+
+
     
 
 
 
 
   app.get('/material/:id', async (req, res) => {
-      const materialId = req.params.id;
-      const db = new pg.Client(dbConfig);
-  
-      try {
-          await db.connect();
-          const result = await db.query('SELECT d_name, doc FROM materials WHERE d_id = $1', [materialId]);
-          const material = result.rows[0];
-  
-          if (!material) {
-              res.status(404).send('Material not found');
-              return;
-          }
-  
-          // Assuming you want to serve a PDF file, adjust the content type accordingly
+    const materialId = req.params.id;
+    const db = new pg.Client(dbConfig);
+
+    try {
+        await db.connect();
+        const result = await db.query('SELECT d_name, doc FROM materials WHERE d_id = $1', [materialId]);
+        const material = result.rows[0];
+        console.log(material.doc)
+        if (!material) {
+            res.status(404).send('Material not found');
+            return;
+        }
+        if (material.doc !== undefined && material.doc !== null) {
           res.setHeader('Content-Type', 'application/pdf');
           res.setHeader('Content-Disposition', `inline; filename="${material.d_name}"`);
           res.send(material.doc);
-      } catch (error) {
-          console.error('Error retrieving material:', error);
-          res.status(500).send('Internal Server Error');
-      } finally {
-          db.end();
+      } else {
+          console.log("Entered here")
+          res.status(204).end(); // No Content
       }
-  });
+      
+    } catch (error) {
+        console.error('Error retrieving material:', error);
+        res.status(500).send('Internal Server Error');
+    } finally {
+        db.end();
+    }
+});
+
   
 
 
