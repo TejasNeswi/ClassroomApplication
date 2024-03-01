@@ -39,6 +39,17 @@
             margin-right: 10px;
         }
 
+        .delete-section {
+            width: 138px;
+            height: 37px;
+            border-radius: 8px;
+            background: #5340a6;
+            color: white;
+            font-size: 17px;
+            border: none;
+            margin-left: 317px;
+        }
+
         .materials-list {
             max-width: 800px;
             margin: 0 auto;
@@ -135,25 +146,28 @@
                 padding: 10px;
             }
         }
+
         .announcement-section {
-            border: 2px solid #007bff; 
-            border-radius: 10px; 
-            padding: 15px; 
-            margin-bottom: 20px; 
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
         .announcement-section:last-child {
-            margin-bottom: 0; 
+            margin-bottom: 0;
         }
 
         .material-item {
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-            padding: 10px; 
-            margin-bottom: 10px; 
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
         }
+
         #announcement {
-            width: calc(100% - 20px); /* Adjust the width as needed */
+            width: calc(100% - 20px);
+            /* Adjust the width as needed */
             padding: 8px;
             margin-top: 8px;
             margin-bottom: 16px;
@@ -161,7 +175,6 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
-        
     </style>
 </head>
 
@@ -173,7 +186,7 @@
                 <i class="fas fa-folder folder-icon"></i>
                 Upload Materials
             </a>
-            <form action="/upload_material" class="upload" method="post" enctype="multipart/form-data" >
+            <form action="/upload_material" class="upload" method="post" enctype="multipart/form-data">
                 <label for="announcement">Announcements</label>
                 <textarea name="announcement" id="announcement" required rows="4"></textarea>
                 <div id="fileUploadContainer">
@@ -189,45 +202,50 @@
             </form>
         </li>
     </ul>
-    
+
     <div class="materials-list">
         <h2>Materials List</h2>
-        <% announcements.forEach((announcement, index) => { %>
+        <% announcements.forEach((announcement, index)=> { %>
             <div class="announcement-section">
                 <h3 id="announcementText_<%= index %>"></h3>
                 <script>
                     var announcementText<%= index %> = `<%= announcement.announcement %>`;
                     var announcementDiv<%= index %> = document.getElementById('announcementText_<%= index %>');
-                    announcementDiv<%= index %>.innerHTML = announcementText<%= index %>.replace(/\n/g, '<br>');
+                    announcementDiv <%= index %>.innerHTML = announcementText <%= index %>.replace(/\n/g, '<br>');
                 </script>
-                <% if (announcement.materials.length > 0) { %>
-                    <% announcement.materials.forEach(material => { %>
-                        <% if (material.d_name !== null) { %>
+                <% if (announcement.materials.length> 0) { %>
+                    <% announcement.materials.forEach(material=> { %>
+                        <% if (material.d_name !==null) { %>
                             <div class="material-item">
                                 <a href="/material/<%= material.d_id %>">
                                     <i class="fas fa-desktop screen-icon"></i>
-                                    <h4><%= material.d_name %></h4>
-                                    <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
+                                    <h4>
+                                        <%= material.d_name %>
+                                    </h4>
+                                    <button class="delete-button"
+                                        onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
                                 </a>
                             </div>
-                        <% } %>
-                    <% }); %>
-                <% } else { %>
-                    <p>No materials available for this announcement.</p>
-                <% } %>
-                <button class="delete-section" onclick="deleteSection('<%= encodeURIComponent(announcement.announcement) %>')">Delete Section</button>
+                            <% } %>
+                                <% }); %>
+                                    <% } else { %>
+                                        <p>No materials available for this announcement.</p>
+                                        <% } %>
+                                            <button class="delete-section"
+                                                onclick="deleteSection('<%= encodeURIComponent(announcement.announcement) %>')">Delete
+                                                Section</button>
 
             </div>
-        <% }); %>
-        <% if (announcements.length === 0) { %>
-            <div class="no-announcements">
-                <p>No announcements available.</p>
-            </div>
-        <% } %>
+            <% }); %>
+                <% if (announcements.length===0) { %>
+                    <div class="no-announcements">
+                        <p>No announcements available.</p>
+                    </div>
+                    <% } %>
     </div>
-    
-    
-    
+
+
+
 
     <script>
         function toggleForm() {
@@ -285,7 +303,7 @@
             }
         }
 
-   
+
     </script>
 </body>
 

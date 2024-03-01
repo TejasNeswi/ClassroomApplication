@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Class</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
         }
 
         h1 {
@@ -19,34 +19,33 @@
             font-size: 50px;
         }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
+        .file-container {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
             align-items: center;
+            margin-top: 20px;
         }
 
-        li {
-            margin: 10px;
-        }
-
-        .folder-container,
-        .file-container {
-            text-align: center;
-        }
-
-        .folder-container form,
         .file-container a {
-            display: block;
             text-decoration: none;
             color: inherit;
         }
+        .ab {
+            margin-left: -600px;
+            margin-top: 78px;
+        }
 
-        .folder-container button,
-        .file-container button {
+        .bc {
+            margin-top: -205px;
+            margin-left: -10px;
+        }
+
+        .cd {
+            margin-left: 549px;
+        margin-top: -245px;
+        }
+
+        .xy {
             background-color: #007bff;
             border: none;
             color: #fff;
@@ -54,74 +53,37 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin-top: 10px;
+            margin: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: flex; /* Ensures the button contents are displayed in a flex container */
+            flex-direction: column; /* Aligns button contents in a column */
+            align-items: center; /* Centers items horizontally */
+            width: 200px;
+            height: 150px;
+            font-size: 25px;
         }
 
-
-
-        .folder-container button:hover,
-        .file-container button:hover {
+        .xy:hover {
             background-color: #0056b3;
         }
 
-        .folder-icon,
-        .file-icon {
+        .folder-icon {
             font-size: 24px;
             margin-bottom: 5px;
         }
 
-        .logout,
-        .reset {
+        .file-container button i {
             display: block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-            text-align: center;
-            text-decoration: none;
-            border: none;
-        }
-
-        .logout {
-            background-color: #dc3545;
-            color: #fff;
-            margin-bottom: 20px;
-            margin-left: 724px;
-            margin-top: 200px;
-        }
-
-        .logout:hover {
-            background-color: #c82333;
-        }
-
-        .reset {
-            background-color: #2a0174;
-            color: #fff;
-            margin-left: 690px;
-        }
-        .wx {
-            width: 141px;
-        }
-
-        .wx,
-        .xy {
-            margin-left: 45px;
-            font-size: 20px;
-            height: 135px;
-            font-size: 22px;
-        }
-
-        .reset:hover {
-            background-color: #218838;
         }
     </style>
-</head>
+
+    
+    
 <body>
     <h1>Welcome to <%= section %></h1>
     <div class="file-container">
-        <a href="/views/cdm.ejs">
+        <a class="ab" href="/views/cdm.ejs">
             <button class="xy">
                 <i class="fas fa-folder folder-icon"></i><br>
                 Materials
@@ -130,7 +92,7 @@
     </div>
     </li>
     <div class="file-container">
-        <a href="/views/cda.ejs">
+        <a class="bc" href="/views/cda.ejs">
             <button class="xy">
                 <i class="fas fa-folder folder-icon"></i><br>
                 Attendance
@@ -139,7 +101,7 @@
     </div>
     </li>
     <div class="file-container">
-        <a href="/views/cda.ejs">
+        <a class="cd" href="/views/cda.ejs">
             <button class="xy">
                 <i class="fas fa-folder folder-icon"></i><br>
                 CIE
