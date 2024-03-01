@@ -18,6 +18,7 @@ import { dirname } from 'path';
 import path from 'path'
 import ExcelJS from 'exceljs'
 import { render } from "ejs";
+import nodemailer from 'nodemailer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,6 +37,14 @@ const dbConfig = {
 const storage=multer.memoryStorage();
 const upload =multer({storage});
 
+//configuring nodemailer
+let transporter=nodemailer.createTransport({
+  service:'gmail',
+  auth:{
+    user:'',
+    pass:''
+  }
+})
 
 
 
@@ -508,6 +517,19 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
               await db.query('INSERT INTO materials (d_name, doc, div, subject, sec,announcement,delannounce) VALUES ($1, $2, $3, $4, $5,$6,$7)', [fileName, fileData, usersec, sub, fileSec,announcement,ann]);
           }
       }
+      const username=req.session.username;
+      const mail={
+        from:'',
+        to:[''],
+        subject:`You have a new announcement in ${sub} from ${username} `,
+        text:`${announcement}`
+
+      }
+      transporter.sendMail(mail,(error,info)=>{
+        if(error){
+          return console.log(error);
+        }
+      })
 
       res.redirect(`/views/cdm.ejs?div=${encodeURIComponent(usersec)}`);
   } catch (error) {
