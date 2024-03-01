@@ -141,32 +141,38 @@
 
     <div class="materials-list">
         <h2>Materials List</h2>
-        <% if (announcements.length > 0) { %>
-            <% for (let announcement of announcements) { %>
-                <div class="announcement-section">
-                    <h3><%= announcement.announcement %></h3>
-                    <% if (announcement.materials.length > 0) { %>
-                        <% for (let material of announcement.materials) { %>
-                            <% if (material.d_name !== null) { %>
-                                <div class="material-item">
-                                    <a href="/material/<%= material.d_id %>">
-                                        <i class="fas fa-desktop screen-icon"></i>
-                                        <h4><%= material.d_name %></h4>
-                                    </a>
-                                </div>
-                            <% } %>
+        <% announcements.forEach((announcement, index) => { %>
+            <div class="announcement-section">
+                <h3 id="announcementText_<%= index %>"></h3>
+                <script>
+                    var announcementText<%= index %> = `<%= announcement.announcement %>`;
+                    var announcementDiv<%= index %> = document.getElementById('announcementText_<%= index %>');
+                    announcementDiv<%= index %>.innerHTML = announcementText<%= index %>.replace(/\n/g, '<br>');
+                </script>
+                <% if (announcement.materials.length > 0) { %>
+                    <% announcement.materials.forEach(material => { %>
+                        <% if (material.d_name !== null) { %>
+                            <div class="material-item">
+                                <a href="/material/<%= material.d_id %>">
+                                    <i class="fas fa-desktop screen-icon"></i>
+                                    <h4><%= material.d_name %></h4>
+                                </a>
+                            </div>
                         <% } %>
-                    <% } else { %>
-                        <p>No materials available for this announcement.</p>
-                    <% } %>
-                </div>
-            <% } %>
-        <% } else { %>
+                    <% }); %>
+                <% } else { %>
+                    <p>No materials available for this announcement.</p>
+                <% } %>
+            </div>
+        <% }); %>
+        <% if (announcements.length === 0) { %>
             <div class="no-announcements">
                 <p>No announcements available.</p>
             </div>
         <% } %>
     </div>
+    
+    
 
     <form action="/logout.ejs" method="get">
         <button type="submit" class="logout">Logout</button>

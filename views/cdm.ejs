@@ -152,6 +152,16 @@
             padding: 10px; 
             margin-bottom: 10px; 
         }
+        #announcement {
+            width: calc(100% - 20px); /* Adjust the width as needed */
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        
     </style>
 </head>
 
@@ -163,9 +173,9 @@
                 <i class="fas fa-folder folder-icon"></i>
                 Upload Materials
             </a>
-            <form action="/upload_material" class="upload" method="post" enctype="multipart/form-data">
+            <form action="/upload_material" class="upload" method="post" enctype="multipart/form-data" >
                 <label for="announcement">Announcements</label>
-                <input type="text" name="announcement" id="announcement" required>
+                <textarea name="announcement" id="announcement" required rows="4"></textarea>
                 <div id="fileUploadContainer">
                     <label for="materialUpload">Select Files:</label>
                     <input type="file" class="file" name="materialUpload[]" id="materialUpload" accept=".pdf" multiple>
@@ -179,31 +189,43 @@
             </form>
         </li>
     </ul>
-
+    
     <div class="materials-list">
         <h2>Materials List</h2>
-        <% for (let announcementIndex in announcements) { %>
-            <% const announcement = announcements[announcementIndex]; %>
-            <div class="announcement-section" id="section_<%= announcementIndex %>">
-                <hr>
-                <h3><%= announcement.announcement %></h3>
+        <% announcements.forEach((announcement, index) => { %>
+            <div class="announcement-section">
+                <h3 id="announcementText_<%= index %>"></h3>
+                <script>
+                    var announcementText<%= index %> = `<%= announcement.announcement %>`;
+                    var announcementDiv<%= index %> = document.getElementById('announcementText_<%= index %>');
+                    announcementDiv<%= index %>.innerHTML = announcementText<%= index %>.replace(/\n/g, '<br>');
+                </script>
                 <% if (announcement.materials.length > 0) { %>
-                    <% for (let material of announcement.materials) { %>
+                    <% announcement.materials.forEach(material => { %>
                         <% if (material.d_name !== null) { %>
                             <div class="material-item">
-                                <i class="fas fa-desktop screen-icon"></i>
-                                <h4><%= material.d_name %></h4>
-                                <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
+                                <a href="/material/<%= material.d_id %>">
+                                    <i class="fas fa-desktop screen-icon"></i>
+                                    <h4><%= material.d_name %></h4>
+                                    <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
+                                </a>
                             </div>
                         <% } %>
-                    <% } %>
+                    <% }); %>
                 <% } else { %>
                     <p>No materials available for this announcement.</p>
                 <% } %>
-                <button class="delete-section" onclick="deleteSection('<%= announcement.announcement %>')">Delete Section</button>
+                <button class="delete-section" onclick="deleteSection('<%= encodeURIComponent(announcement.announcement) %>')">Delete Section</button>
+
+            </div>
+        <% }); %>
+        <% if (announcements.length === 0) { %>
+            <div class="no-announcements">
+                <p>No announcements available.</p>
             </div>
         <% } %>
     </div>
+    
     
     
 
@@ -239,6 +261,7 @@
         }
 
         function deleteSection(announcement) {
+            console.log(announcement)
             if (confirm(`Are you sure you want to delete all materials in the section "${announcement}"?`)) {
                 fetch(`/delete_section/${announcement}`, {
                     method: 'DELETE',
@@ -261,6 +284,8 @@
                     });
             }
         }
+
+   
     </script>
 </body>
 

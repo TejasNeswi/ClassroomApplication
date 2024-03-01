@@ -6,7 +6,6 @@
 
 
 
-
 import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
@@ -315,7 +314,7 @@ app.delete('/delete_section/:announcement', async (req, res) => {
   const announcement = req.params.announcement;
   const ann=announcement.replace(/\s+/g,"").toLowerCase();
   const db=new pg.Client(dbConfig)
-  
+  console.log(announcement)
   try {
       await db.connect();
       await db.query('DELETE FROM materials WHERE delannounce = $1', [ann]);
