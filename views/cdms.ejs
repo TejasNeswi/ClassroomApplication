@@ -114,7 +114,26 @@
         .logout:hover {
             background-color: #c82333;
         }
-    </style>
+        .announcement-section {
+            border: 2px solid #007bff; 
+            border-radius: 10px; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+        }
+
+        .announcement-section:last-child {
+            margin-bottom: 0; 
+        }
+
+        .material-item {
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            padding: 10px; 
+            margin-bottom: 10px; 
+        }
+
+           
+        </style>
 </head>
 
 <body>
@@ -128,7 +147,7 @@
                     <h3><%= announcement.announcement %></h3>
                     <% if (announcement.materials.length > 0) { %>
                         <% for (let material of announcement.materials) { %>
-                            <% if (material.doc !== null) { %>
+                            <% if (material.d_name !== null) { %>
                                 <div class="material-item">
                                     <a href="/material/<%= material.d_id %>">
                                         <i class="fas fa-desktop screen-icon"></i>

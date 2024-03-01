@@ -197,7 +197,6 @@ app.get("/views/cdms.ejs", async (req, res) => {
     // Retrieve materials
     const materialsResult = await db.query("SELECT d_id, d_name, sec, announcement FROM materials WHERE (div, subject)=($1, $2)", [usersec, userSub]);
     const materials = materialsResult.rows;
-    console.log("Materials retrieved:", materials);
 
     // Group materials by announcement
     const announcementsMap = new Map();
@@ -253,7 +252,6 @@ app.get("/views/cdm.ejs", async (req, res) => {
       // Retrieve materials with announcements
       const materialsResult = await db.query("SELECT d_id, d_name, sec, announcement FROM materials WHERE (div, subject)=($1, $2)", [usersec, sub]);
       const materials = materialsResult.rows;
-      console.log("Materials retrieved:", materials);
 
       // Group materials by announcement
       const announcementsMap = new Map();
@@ -312,6 +310,31 @@ app.delete('/delete_material/:materialId',async (req,res)=>{
   }
   
 })
+
+app.delete('/delete_section/:announcement', async (req, res) => {
+  const announcement = req.params.announcement;
+  const ann=announcement.replace(/\s+/g,"").toLowerCase();
+  const db=new pg.Client(dbConfig)
+  
+  try {
+      await db.connect();
+      await db.query('DELETE FROM materials WHERE delannounce = $1', [ann]);
+      console.log("Deletion successfull")
+      res.json({ message: 'Section and associated materials deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting section and materials:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+  finally{
+    db.end((endErr) => {
+      if (endErr) {
+        console.error("Connection couldn't terminate", endErr);
+      } else {
+        console.log("Connection terminated successfully");
+      }
+    });
+  }
+});
 
 
 
@@ -469,21 +492,21 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
 
   const announcement = req.body.announcement;
   const fileSec = req.body.sec;
-  console.log(announcement);
+  const ann=announcement.replace(/\s+/g,"").toLowerCase();
   const db = new pg.Client(dbConfig);
 
   try {
       await db.connect();
 
       if (announcement && req.files.length === 0) {
-          // No files uploaded, only an announcement
-          await db.query('INSERT INTO materials (div,subject,announcement) VALUES ($1,$2,$3)', [usersec,sub,announcement]);
+         
+          await db.query('INSERT INTO materials (div,subject,announcement,delannounce) VALUES ($1,$2,$3,$4)', [usersec,sub,announcement,ann]);
       } else if (req.files.length > 0) {
           for (const file of req.files) {
               const fileName = file.originalname;
               const fileData = file.buffer;
 
-              await db.query('INSERT INTO materials (d_name, doc, div, subject, sec,announcement) VALUES ($1, $2, $3, $4, $5,$6)', [fileName, fileData, usersec, sub, fileSec,announcement]);
+              await db.query('INSERT INTO materials (d_name, doc, div, subject, sec,announcement,delannounce) VALUES ($1, $2, $3, $4, $5,$6,$7)', [fileName, fileData, usersec, sub, fileSec,announcement,ann]);
           }
       }
 
@@ -516,7 +539,6 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
         await db.connect();
         const result = await db.query('SELECT d_name, doc FROM materials WHERE d_id = $1', [materialId]);
         const material = result.rows[0];
-        console.log(material.doc)
         if (!material) {
             res.status(404).send('Material not found');
             return;
@@ -526,7 +548,6 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
           res.setHeader('Content-Disposition', `inline; filename="${material.d_name}"`);
           res.send(material.doc);
       } else {
-          console.log("Entered here")
           res.status(204).end(); // No Content
       }
       

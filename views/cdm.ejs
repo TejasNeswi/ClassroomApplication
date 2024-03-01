@@ -135,6 +135,23 @@
                 padding: 10px;
             }
         }
+        .announcement-section {
+            border: 2px solid #007bff; 
+            border-radius: 10px; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+        }
+
+        .announcement-section:last-child {
+            margin-bottom: 0; 
+        }
+
+        .material-item {
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            padding: 10px; 
+            margin-bottom: 10px; 
+        }
     </style>
 </head>
 
@@ -167,19 +184,27 @@
         <h2>Materials List</h2>
         <% for (let announcementIndex in announcements) { %>
             <% const announcement = announcements[announcementIndex]; %>
-            <div class="announcement-section">
+            <div class="announcement-section" id="section_<%= announcementIndex %>">
                 <hr>
                 <h3><%= announcement.announcement %></h3>
-                <% for (let material of announcement.materials) { %>
-                    <div class="material-item">
-                        <i class="fas fa-desktop screen-icon"></i>
-                        <h4><%= material.d_name %></h4>
-                        <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
-                    </div>
+                <% if (announcement.materials.length > 0) { %>
+                    <% for (let material of announcement.materials) { %>
+                        <% if (material.d_name !== null) { %>
+                            <div class="material-item">
+                                <i class="fas fa-desktop screen-icon"></i>
+                                <h4><%= material.d_name %></h4>
+                                <button class="delete-button" onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
+                            </div>
+                        <% } %>
+                    <% } %>
+                <% } else { %>
+                    <p>No materials available for this announcement.</p>
                 <% } %>
+                <button class="delete-section" onclick="deleteSection('<%= announcement.announcement %>')">Delete Section</button>
             </div>
         <% } %>
     </div>
+    
     
 
     <script>
@@ -212,7 +237,32 @@
                     });
             }
         }
+
+        function deleteSection(announcement) {
+            if (confirm(`Are you sure you want to delete all materials in the section "${announcement}"?`)) {
+                fetch(`/delete_section/${announcement}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Section deleted:', data);
+                        document.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error deleting section:', error);
+                    });
+            }
+        }
     </script>
 </body>
+
 
 </html>
