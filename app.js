@@ -41,8 +41,8 @@ const upload =multer({storage});
 let transporter=nodemailer.createTransport({
   service:'gmail',
   auth:{
-    user:'',
-    pass:''
+    user:'prajwalu.cy22@rvce.edu.in',
+    pass:'prajwalucy@2026'
   }
 })
 
@@ -59,7 +59,7 @@ app.use(
     resave:false,
     saveUninitialized:true,
     cookie:{secure:false,
-    maxAge:360000
+    maxAge:36000000
   //maxAge defines the duration of the session}
   }}
   )
@@ -88,7 +88,14 @@ app.get("/",(req,res)=>{
 })
 
 
+app.get("/views/attendance.ejs",(req,res)=>{
+  res.render("attendance.ejs")
+})
 
+
+app.get("/views/cie.ejs",(req,res)=>{
+  res.render("cie.ejs")
+})
 //get request to the login form
 app.get("/login",(req,res)=>{
   res.render("login.ejs")
@@ -114,7 +121,7 @@ app.post("/login", async (req, res) => {
   const salt = await bcrypt.genSalt(5);
   const hash = await bcrypt.hash(password, salt);
   const db = new pg.Client(dbConfig);
-  console.log(hash);
+  //console.log(hash);
  
   try {
       await db.connect();
@@ -252,6 +259,11 @@ app.get("/views/cdm.ejs", async (req, res) => {
   const db = new pg.Client(dbConfig);
   const usersec = req.session.sec;
   const sub = req.session.sub;
+  console.log(req.session.mode)
+  if(req.session.mode!=="teacher"){
+    res.redirect("/login");
+    return;
+  }
 
   try {
       await db.connect();
@@ -320,7 +332,7 @@ app.delete('/delete_material/:materialId',async (req,res)=>{
 })
 
 app.delete('/delete_section/:announcement', async (req, res) => {
-  const announcement = req.params.announcement;
+  const announcement = decodeURIComponent(req.params.announcement);
   const ann=announcement.replace(/\s+/g,"").toLowerCase();
   const db=new pg.Client(dbConfig)
   console.log(announcement)
@@ -518,18 +530,18 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
           }
       }
       const username=req.session.username;
-      const mail={
-        from:'',
-        to:[''],
-        subject:`You have a new announcement in ${sub} from ${username} `,
-        text:`${announcement}`
+      // const mail={
+      //   from:'prajwalucy.22@rvce.edu.in',
+      //   to:['santhoshkumarl.cy22@rvce.edu.in'],
+      //   subject:`You have a new announcement in ${sub} from ${username} `,
+      //   text:`${announcement}`
 
-      }
-      transporter.sendMail(mail,(error,info)=>{
-        if(error){
-          return console.log(error);
-        }
-      })
+      // }
+      // transporter.sendMail(mail,(error,info)=>{
+      //   if(error){
+      //     return console.log(error);
+      //   }
+      // })
 
       res.redirect(`/views/cdm.ejs?div=${encodeURIComponent(usersec)}`);
   } catch (error) {
