@@ -512,7 +512,7 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
 
   const announcement = req.body.announcement;
   const fileSec = req.body.sec;
-  const ann=announcement.replace(/\s+/g,"").toLowerCase();
+  const ann=announcement.replace(/\s+/g,"").toLowerCase();   
   const db = new pg.Client(dbConfig);
 
   try {
@@ -530,18 +530,28 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
           }
       }
       const username=req.session.username;
-      // const mail={
-      //   from:'prajwalucy.22@rvce.edu.in',
-      //   to:['santhoshkumarl.cy22@rvce.edu.in'],
-      //   subject:`You have a new announcement in ${sub} from ${username} `,
-      //   text:`${announcement}`
+      if(usersec==="CY"){
+      const mail={
+        from:'prajwalucy.22@rvce.edu.in',
+        to:['sjeevan.cy22@rvce.edu.in,caindrasenan.cy22@rvce.edu.in'],
+        subject:`You have a new announcement in ${sub} from ${username} `,
+        text:`${announcement}`
 
-      // }
-      // transporter.sendMail(mail,(error,info)=>{
-      //   if(error){
-      //     return console.log(error);
-      //   }
-      // })
+      }
+    }
+    else{
+      const mail={
+      from:'prajwalucy.22@rvce.edu.in',
+      to:['sjeevan.cy22@rvce.edu.in,caindrasenan.cy22@rvce.edu.in'],
+      subject:`You have a new announcement in ${sub} from ${username} `,
+      text:`${announcement}`
+      }
+    }
+      transporter.sendMail(mail,(error,info)=>{
+        if(error){
+          return console.log(error);
+        }
+      })
 
       res.redirect(`/views/cdm.ejs?div=${encodeURIComponent(usersec)}`);
   } catch (error) {
