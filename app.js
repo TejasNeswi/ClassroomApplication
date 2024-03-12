@@ -3,7 +3,7 @@
 //233 get to cdm 279 delete 307 post to register 386 get to reset
 //451 post to upload 488 get material id
 
-
+//W
 
 
 import express from "express";
@@ -19,11 +19,10 @@ import path from 'path'
 import ExcelJS from 'exceljs'
 import { render } from "ejs";
 import nodemailer from 'nodemailer';
+import env from "dotenv";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-
 const app = express();
 const dbConfig = {
   user: "postgres",
@@ -36,13 +35,14 @@ const dbConfig = {
 //configuring multer
 const storage=multer.memoryStorage();
 const upload =multer({storage});
+env.config();
 
 //configuring nodemailer
 let transporter=nodemailer.createTransport({
   service:'gmail',
   auth:{
-    user:'',
-    pass:''
+    user:process.env.SESSION_MAILID,
+    pass:process.env.SESSION_PASS
   }
 })
 
@@ -529,20 +529,21 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
               await db.query('INSERT INTO materials (d_name, doc, div, subject, sec,announcement,delannounce) VALUES ($1, $2, $3, $4, $5,$6,$7)', [fileName, fileData, usersec, sub, fileSec,announcement,ann]);
           }
       }
+      let mail={}
       const username=req.session.username;
       if(usersec==="CY"){
-      const mail={
-        from:'',
-        to:[''],
+      mail={
+        from:process.env.SESSION_MAILID,
+        to:[],
         subject:`You have a new announcement in ${sub} from ${username} `,
         text:`${announcement}`
 
       }
     }
     else{
-      const mail={
-      from:'',
-      to:[''],
+      mail={
+      from:process.env.SESSION_MAILID,
+      to:[],
       subject:`You have a new announcement in ${sub} from ${username} `,
       text:`${announcement}`
       }
