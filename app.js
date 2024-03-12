@@ -41,8 +41,8 @@ const upload =multer({storage});
 let transporter=nodemailer.createTransport({
   service:'gmail',
   auth:{
-    user:'prajwalu.cy22@rvce.edu.in',
-    pass:'prajwalucy@2026'
+    user:'',
+    pass:''
   }
 })
 
@@ -532,8 +532,8 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
       const username=req.session.username;
       if(usersec==="CY"){
       const mail={
-        from:'prajwalucy.22@rvce.edu.in',
-        to:['sjeevan.cy22@rvce.edu.in,caindrasenan.cy22@rvce.edu.in'],
+        from:'',
+        to:[''],
         subject:`You have a new announcement in ${sub} from ${username} `,
         text:`${announcement}`
 
@@ -541,8 +541,8 @@ app.post('/upload_material', upload.array('materialUpload[]', 10), async (req, r
     }
     else{
       const mail={
-      from:'prajwalucy.22@rvce.edu.in',
-      to:['sjeevan.cy22@rvce.edu.in,caindrasenan.cy22@rvce.edu.in'],
+      from:'',
+      to:[''],
       subject:`You have a new announcement in ${sub} from ${username} `,
       text:`${announcement}`
       }
