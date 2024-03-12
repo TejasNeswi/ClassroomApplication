@@ -211,7 +211,7 @@
                 <script>
                     var announcementText<%= index %> = `<%= announcement.announcement %>`;
                     var announcementDiv<%= index %> = document.getElementById('announcementText_<%= index %>');
-                    announcementDiv <%= index %>.innerHTML = announcementText <%= index %>.replace(/\n/g, '<br>');
+                    announcementDiv<%= index %>.innerHTML = announcementText<%=index %>.replace(/\n/g, '<br>');
                 </script>
                 <% if (announcement.materials.length> 0) { %>
                     <% announcement.materials.forEach(material=> { %>
@@ -219,24 +219,23 @@
                             <div class="material-item">
                                 <a href="/material/<%= material.d_id %>">
                                     <i class="fas fa-desktop screen-icon"></i>
-                                    <h4>
-                                        <%= material.d_name %>
-                                    </h4>
-                                    <button class="delete-button"
-                                        onclick="deleteMaterial('<%= material.d_id %>')">Delete</button>
+                                    <h4><%= material.d_name %></h4>
+                                    <button class="delete-button" onclick="deleteMaterial(<%= material.d_id %>)">Delete</button>
                                 </a>
                             </div>
-                            <% } %>
-                                <% }); %>
-                                    <% } else { %>
-                                        <p>No materials available for this announcement.</p>
-                                        <% } %>
-                                            <button class="delete-section"
-                                                onclick="deleteSection('<%= encodeURIComponent(announcement.announcement) %>')">Delete
-                                                Section</button>
+                        <% } %>
+                    <% }); %>
+                <% } else { %>
+                    <p>No materials available for this announcement.</p>
+                <% } %>
+                <button class="delete-section" onclick="deleteSection('<%= encodeURIComponent(announcement.announcement) %>')">Delete Section</button>
+                <!-- <button class="delete-section" onclick="deleteSection(`${encodeURIComponent(announcement[announcement].replace(/'/g, '\\\''))}`)">Delete Section</button> -->
+
+
 
             </div>
-            <% }); %>
+        <% }); %>
+        
                 <% if (announcements.length===0) { %>
                     <div class="no-announcements">
                         <p>No announcements available.</p>
@@ -279,7 +278,7 @@
         }
 
         function deleteSection(announcement) {
-            console.log(announcement)
+            
             if (confirm(`Are you sure you want to delete all materials in the section "${announcement}"?`)) {
                 fetch(`/delete_section/${announcement}`, {
                     method: 'DELETE',
@@ -302,7 +301,8 @@
                     });
             }
         }
-
+        
+ 
 
     </script>
 </body>
